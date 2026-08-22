@@ -1,3 +1,11 @@
+/**
+ * Design tokens ported from the Stitch "Aether Editorial" theme.
+ *
+ * INTEGRATION.md §6.1: this config is authoritative. Stitch output ships
+ * with its own inline `tailwind.config` and a CDN <script> — both are
+ * dropped on port, and the tokens live here instead so every screen shares
+ * one scale rather than each pasting its own.
+ */
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
