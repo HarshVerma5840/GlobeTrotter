@@ -3,7 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../auth/AuthProvider";
 
 const SIDEBAR_LINKS = [
-  { label: "Dashboard", icon: "dashboard", path: "/" },
+  { label: "Dashboard", icon: "dashboard", path: "/dashboard" },
+  { label: "Explore", icon: "travel_explore", path: "/explore" },
   { label: "My Trips", icon: "explore", path: "/trips" },
   { label: "Plan a Trip", icon: "edit_calendar", path: "/trips/new" },
 ] as const;
@@ -17,15 +18,14 @@ export default function AppSidebar() {
   const { user, signOut } = useAuth();
 
   const isActive = (path: string) => {
-    if (path === "/") return location.pathname === "/";
-    return location.pathname.startsWith(path);
+    return location.pathname === path || location.pathname.startsWith(`${path}/`);
   };
 
   return (
     <aside className="fixed left-0 top-0 h-full w-72 bg-surface-container-low z-50 flex flex-col">
       <div className="px-8 h-20 flex items-center mb-8">
         <Link
-          to="/"
+          to="/dashboard"
           className="font-headline-md text-headline-md tracking-tight text-premium-navy italic"
         >
           GlobeTrotter

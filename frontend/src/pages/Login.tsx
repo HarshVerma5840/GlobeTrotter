@@ -1,12 +1,24 @@
 /**
  * Login / Signup (INTEGRATION.md §4, CONTRACTS §3).
  *
- * Exists so the Dashboard's auth guard has somewhere to send people and
- * the flow can be walked end to end. Honours `?redirect=` so signing in
- * returns you to the page you were actually trying to reach.
+ * The split-screen layout is ported from the ExploreScape prototype that
+ * lived in `Odoo/ExploreScape-Travel-website-main/auth.html`: a full-height
+ * photographic panel on the left carrying the brand, the form on the right.
+ *
+ * What did NOT come across is that prototype's form *fields*. It collected
+ * phone, city, country and a free-text "additional information" box, and
+ * then navigated to index.html without sending any of it anywhere. The
+ * signup contract is `{ email, password, name }` (CONTRACTS §3) and
+ * types/models.ts is explicit that a screen never invents a field — so the
+ * two-column rhythm is kept, filled with first/last name and the credentials
+ * that are actually persisted. Asking for a phone number we would silently
+ * drop is worse than not asking.
+ *
+ * Honours `?redirect=` so signing in returns you to the page you were
+ * actually trying to reach.
  */
-import { useState, type FormEvent } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useState, type FormEvent, type ReactNode } from "react";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 
 import { ApiError } from "../api/client";
 import { useAuth } from "../auth/AuthProvider";
@@ -21,24 +33,28 @@ export default function Login() {
   const [mode, setMode] = useState<Mode>("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const redirectTo = new URLSearchParams(location.search).get("redirect") || "/";
+  /* Signed-in users have no business on this screen; `/dashboard` is the
+     app's real home, `/` is the public landing page. */
+  const redirectTo = new URLSearchParams(location.search).get("redirect") || "/dashboard";
 
-  // Already signed in (or just signed in) — don't show the form at all.
   if (!isLoading && isAuthenticated) return <Navigate to={redirectTo} replace />;
+
+  const isSignup = mode === "signup";
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
     setError(null);
     setBusy(true);
     try {
-      if (mode === "signin") {
-        await signIn(email, password);
+      if (isSignup) {
+        await signUp(email, password, `${firstName} ${lastName}`.trim());
       } else {
-        await signUp(email, password, name);
+        await signIn(email, password);
       }
       navigate(redirectTo, { replace: true });
     } catch (err) {
@@ -55,47 +71,77 @@ export default function Login() {
     }
   }
 
-  const isSignup = mode === "signup";
+  function switchMode() {
+    setMode(isSignup ? "signin" : "signup");
+    setError(null);
+  }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <div className="h-20 max-w-[1440px] w-full mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop flex items-center">
-        <span className="font-headline-lg text-headline-lg tracking-tighter text-primary">
-          GlobeTrotter
-        </span>
-      </div>
-
-      <main className="flex-1 flex items-center justify-center px-margin-mobile py-12">
-        <div className="w-full max-w-md flex flex-col gap-8">
-          <div className="flex flex-col gap-3">
-            <h1 className="font-display-xl text-headline-lg md:text-display-xl leading-none text-primary tracking-tight">
-              {isSignup ? "Begin" : "Welcome back"}
-            </h1>
-            <p className="font-body-lg text-body-lg text-on-surface-variant">
-              {isSignup
-                ? "Create an account to start planning expeditions."
-                : "Sign in to reach your itineraries."}
-            </p>
-          </div>
-
-          <form
-            onSubmit={onSubmit}
-            className="bg-surface-container-lowest shadow-xl rounded-xl p-6 flex flex-col gap-5"
+    <div className="min-h-screen w-full flex flex-col md:flex-row bg-editorial-bg">
+      {/* ── Left: photographic brand panel ──────────────────────────── */}
+      <aside
+        className="relative w-full md:w-[45%] min-h-[280px] md:min-h-screen bg-cover bg-center flex flex-col justify-center p-10 lg:p-16"
+        style={{ backgroundImage: "url('/img/hero-sky.png')" }}
+      >
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(135deg, rgba(17,17,17,0.65) 0%, rgba(17,17,17,0.25) 100%)",
+          }}
+        />
+        <div className="relative z-10 flex flex-col gap-4">
+          <Link
+            to="/"
+            className="font-headline-lg text-[40px] lg:text-[48px] leading-none text-white tracking-wide hover:opacity-80 transition-opacity"
           >
+            GlobeTrotter
+          </Link>
+          <p className="font-body-md text-[16px] leading-relaxed tracking-[0.06em] text-white/80 max-w-[80%]">
+            The art of travel refined for the intellectually curious.
+          </p>
+        </div>
+      </aside>
+
+      {/* ── Right: the form ─────────────────────────────────────────── */}
+      <main className="w-full md:w-[55%] bg-editorial-card flex items-center justify-center p-8 lg:p-12">
+        <div className="w-full max-w-[500px]">
+          <h2 className="font-headline-lg text-[36px] leading-tight text-editorial-primary">
+            {isSignup ? "Create Account" : "Welcome Back"}
+          </h2>
+          <p className="font-body-md text-[14px] text-editorial-secondary mt-2 mb-10">
+            {isSignup
+              ? "Join GlobeTrotter and start planning your next journey."
+              : "Enter your credentials to access your account."}
+          </p>
+
+          <form onSubmit={onSubmit} className="flex flex-col gap-6">
             {isSignup && (
-              <Field label="Name">
-                <input
-                  className={INPUT}
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Ada Lovelace"
-                  required
-                  autoComplete="name"
-                />
-              </Field>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Field label="First Name" className="flex-1">
+                  <input
+                    className={INPUT}
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder="First Name"
+                    required
+                    autoComplete="given-name"
+                  />
+                </Field>
+                <Field label="Last Name" className="flex-1">
+                  <input
+                    className={INPUT}
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    placeholder="Last Name"
+                    required
+                    autoComplete="family-name"
+                  />
+                </Field>
+              </div>
             )}
 
-            <Field label="Email">
+            <Field label="Email Address" icon="mail">
               <input
                 className={INPUT}
                 type="email"
@@ -107,13 +153,13 @@ export default function Login() {
               />
             </Field>
 
-            <Field label="Password">
+            <Field label="Password" icon="lock">
               <input
                 className={INPUT}
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="At least 8 characters"
+                placeholder={isSignup ? "At least 8 characters" : "Enter your password"}
                 required
                 // Mirrors the backend's Pydantic rule so the user finds out
                 // here instead of via a 422 round trip (CONTRACTS §3).
@@ -125,7 +171,7 @@ export default function Login() {
             {error && (
               <p
                 role="alert"
-                className="font-body-md text-body-md text-on-error-container bg-error-container px-4 py-3 rounded-lg"
+                className="font-body-md text-[14px] text-on-error-container bg-error-container px-4 py-3 rounded-control"
               >
                 {error}
               </p>
@@ -134,22 +180,25 @@ export default function Login() {
             <button
               type="submit"
               disabled={busy}
-              className="w-full px-8 py-3 bg-primary text-on-primary font-label-lg text-label-lg rounded-lg hover:bg-premium-navy transition-all uppercase disabled:opacity-50 h-[48px]"
+              className="mt-2 w-full py-4 bg-editorial-primary text-white rounded-control font-label-lg text-[14px] font-semibold uppercase tracking-[0.15em] flex items-center justify-center gap-3 hover:bg-black hover:shadow-editorial-lift transition-all disabled:opacity-50"
             >
-              {busy ? "Working…" : isSignup ? "Create account" : "Sign in"}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setMode(isSignup ? "signin" : "signup");
-                setError(null);
-              }}
-              className="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors"
-            >
-              {isSignup ? "Already have an account? Sign in" : "New here? Create an account"}
+              {busy ? "Working…" : isSignup ? "Register" : "Sign In"}
+              {!busy && (
+                <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+              )}
             </button>
           </form>
+
+          <p className="mt-8 text-center font-body-md text-[14px] text-editorial-secondary">
+            {isSignup ? "Already have an account? " : "Don't have an account? "}
+            <button
+              type="button"
+              onClick={switchMode}
+              className="font-semibold text-editorial-primary underline underline-offset-4 hover:text-editorial-secondary transition-colors"
+            >
+              {isSignup ? "Sign in" : "Sign up"}
+            </button>
+          </p>
         </div>
       </main>
     </div>
@@ -157,12 +206,27 @@ export default function Login() {
 }
 
 const INPUT =
-  "w-full bg-sand-accent text-on-surface font-body-md text-body-md py-3 px-4 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-on-surface-variant/50";
+  "w-full px-4 py-3 rounded-control border border-editorial-border bg-editorial-bg/60 text-editorial-primary font-body-md text-[14px] placeholder:text-editorial-muted focus:outline-none focus:border-editorial-primary focus:bg-editorial-card focus:shadow-editorial transition-all";
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({
+  label,
+  icon,
+  className = "",
+  children,
+}: {
+  label: string;
+  icon?: string;
+  className?: string;
+  children: ReactNode;
+}) {
   return (
-    <label className="flex flex-col gap-2">
-      <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">
+    <label className={`flex flex-col gap-2 ${className}`}>
+      <span className="flex items-center gap-1.5 font-label-sm text-[12px] font-semibold uppercase tracking-[0.1em] text-editorial-secondary">
+        {icon && (
+          <span className="material-symbols-outlined text-[16px] text-editorial-muted">
+            {icon}
+          </span>
+        )}
         {label}
       </span>
       {children}

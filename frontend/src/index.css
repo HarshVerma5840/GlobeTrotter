@@ -32,3 +32,95 @@
     margin-bottom: 0 !important;
   }
 }
+
+/*
+ * Landing hero — ported from the ExploreScape prototype (Odoo/ExploreScape-
+ * Travel-website-main). Kept as plain CSS rather than Tailwind utilities
+ * because the effect is a staggered parallax: three mountain layers rise
+ * from below at different speeds, the headline rises with them BEHIND the
+ * peaks, and a second copy of the headline then fades in IN FRONT. Encoding
+ * that stagger as arbitrary-value classes would be unreadable.
+ */
+@layer components {
+  .hero-layer-1 {
+    animation: hero-rise 1s ease-out forwards;
+  }
+
+  .hero-layer-2 {
+    animation: hero-rise 1.3s ease-out forwards;
+  }
+
+  .hero-layer-3 {
+    animation: hero-rise 1.5s ease-out forwards;
+  }
+
+  .hero-eyebrow {
+    animation: hero-text-rise 1s ease-out forwards;
+  }
+
+  .hero-title {
+    animation: hero-text-rise 1.2s ease-out forwards;
+  }
+
+  /* The front copy of the headline, revealed once the peaks have settled. */
+  .hero-front {
+    opacity: 0;
+    animation: hero-fade 1s ease-in 1.3s forwards;
+  }
+
+  /* Slow drift on the sky plate, so the scene settles rather than snapping. */
+  .hero-sky {
+    animation: hero-sky-drift 1.6s ease-out forwards;
+  }
+}
+
+@keyframes hero-rise {
+  from {
+    transform: translateY(200px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-text-rise {
+  from {
+    transform: translateY(500px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes hero-sky-drift {
+  from {
+    background-position: top;
+  }
+  to {
+    background-position: 50% 14%;
+  }
+}
+
+/* Respect a reduced-motion preference — the scene composes without motion. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-layer-1,
+  .hero-layer-2,
+  .hero-layer-3,
+  .hero-eyebrow,
+  .hero-title,
+  .hero-front,
+  .hero-sky {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

@@ -79,13 +79,23 @@ export default {
         "premium-navy":            "#0F172A",
         "glass-white":             "rgba(255, 255, 255, 0.6)",
 
-        /* Editorial page tokens (Create Trip) */
-        "editorial-bg":            "#F7F5F0",
+        /*
+         * Editorial page tokens — the canonical GlobeTrotter palette.
+         *
+         * Warm ivory + white + black + warm beige. This is the ONLY UI
+         * colour system: natural colour enters the page through travel
+         * photography, never through the chrome. No blue, no purple, no
+         * cool grey — a screen that reaches for those has drifted off
+         * brand (see Explore/Search, Create Trip, Itinerary Builder).
+         */
+        "editorial-bg":            "#F7F5F0",  /* warm ivory — dominant page bg */
         "editorial-card":          "#FFFFFF",
+        "editorial-surface":       "#EFEBE3",  /* secondary warm surface (footer) */
         "editorial-primary":       "#111111",
-        "editorial-secondary":     "#6F6A62",
-        "editorial-border":        "#DDD8CF",
-        "editorial-beige":         "#EFEBE3",
+        "editorial-secondary":     "#625E57",
+        "editorial-muted":         "#8A847B",
+        "editorial-border":        "#D9D3C8",
+        "editorial-beige":         "#E9E3D9",  /* warm beige — labels, hover fills */
       },
 
       /* ── Typography ─────────────────────────────────────────────── */
@@ -128,6 +138,19 @@ export default {
         lg:      "0.5rem",
         xl:      "0.75rem",
         full:    "9999px",
+        /* Editorial, not rounded-SaaS: images 6px, buttons/panels 8px, cards 10px. */
+        image:    "6px",
+        control:  "8px",
+        card:     "10px",
+      },
+
+      /*
+       * One shadow for the whole editorial system. Warm-neutral and almost
+       * invisible — depth comes from the border, not from a coloured glow.
+       */
+      boxShadow: {
+        editorial:       "0 4px 20px rgba(17, 17, 17, 0.04)",
+        "editorial-lift":"0 10px 30px rgba(17, 17, 17, 0.08)",
       },
     },
   },
