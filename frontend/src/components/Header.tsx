@@ -1,16 +1,19 @@
 import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 const NAV_LINKS = [
-  { label: "Home", path: "home", href: "/" },
-  { label: "Explore", path: "explore", href: "#" },
-  { label: "My Trips", path: "my-trips", href: "#" },
-  { label: "Plan a Trip", path: "plan-a-trip", href: "#" },
-  { label: "About", path: "about", href: "#" },
+  { label: "Home", path: "/", href: "/" },
+  { label: "Explore", path: "/explore", href: "#" },
+  { label: "My Trips", path: "/trips", href: "#" },
+  { label: "Plan a Trip", path: "/trips/new", href: "/trips/new" },
+  { label: "About", path: "/about", href: "#" },
 ] as const;
 
 export default function Header() {
-  const [activePath] = useState("home");
+  const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <header className="fixed top-0 w-full z-50 transition-all duration-300 bg-glass-white backdrop-blur-md">
@@ -29,7 +32,7 @@ export default function Header() {
               key={link.path}
               href={link.href}
               className={
-                activePath === link.path
+                isActive(link.path)
                   ? "transition-colors uppercase text-primary font-bold font-label-lg text-label-lg"
                   : "font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors uppercase"
               }
@@ -47,9 +50,12 @@ export default function Header() {
           >
             Sign In
           </a>
-          <button className="hidden sm:inline-flex px-6 py-3 bg-primary text-on-primary font-label-lg text-label-lg rounded-lg hover:bg-premium-navy transition-all uppercase">
+          <Link
+            to="/trips/new"
+            className="hidden sm:inline-flex px-6 py-3 bg-primary text-on-primary font-label-lg text-label-lg rounded-lg hover:bg-premium-navy transition-all uppercase"
+          >
             Plan My Trip
-          </button>
+          </Link>
           <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
             <span className="material-symbols-outlined text-on-primary text-[18px]">
               person
@@ -77,7 +83,7 @@ export default function Header() {
               key={link.path}
               href={link.href}
               className={
-                activePath === link.path
+                isActive(link.path)
                   ? "text-primary font-bold font-label-lg text-label-lg uppercase"
                   : "font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors uppercase"
               }
@@ -93,9 +99,13 @@ export default function Header() {
             >
               Sign In
             </a>
-            <button className="w-full px-6 py-3 bg-primary text-on-primary font-label-lg text-label-lg rounded-lg hover:bg-premium-navy transition-all uppercase">
+            <Link
+              to="/trips/new"
+              className="w-full px-6 py-3 bg-primary text-on-primary font-label-lg text-label-lg rounded-lg hover:bg-premium-navy transition-all uppercase text-center"
+              onClick={() => setMobileOpen(false)}
+            >
               Plan My Trip
-            </button>
+            </Link>
           </div>
         </nav>
       )}

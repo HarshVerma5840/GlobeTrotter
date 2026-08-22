@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
+import CreateTrip from "./pages/CreateTrip";
 
 /**
  * Root app component with client-side routing.
@@ -14,11 +15,11 @@ export default function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route path="/" element={<Dashboard />} />
+        <Route path="/trips/new" element={<CreateTrip />} />
         {/* Future pages:
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/trips" element={<MyTrips />} />
-          <Route path="/trips/new" element={<CreateTrip />} />
           <Route path="/trips/:id" element={<ItineraryBuilder />} />
           <Route path="/trips/:id/view" element={<ItineraryView />} />
           <Route path="/cities" element={<CitySearch />} />
@@ -33,3 +34,4 @@ export default function App() {
     </Routes>
   );
 }
+

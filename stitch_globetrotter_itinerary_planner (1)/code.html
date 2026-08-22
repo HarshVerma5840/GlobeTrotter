@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<style>
+    @layer base {
+      html, body { margin: 0; padding: 0; }
+      body { overscroll-behavior: none; }
+    }
+    ::-webkit-scrollbar { display: none; }
+  </style>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "editorial-bg": "#F7F5F0",
+            "editorial-card": "#FFFFFF",
+            "editorial-primary": "#111111",
+            "editorial-secondary": "#6F6A62",
+            "editorial-border": "#DDD8CF",
+            "editorial-beige": "#EFEBE3"
+          },
+          fontFamily: {
+            "serif": ["'Playfair Display'", "serif"],
+            "sans": ["'Inter'", "sans-serif"],
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+</head>
+<body class="bg-editorial-bg font-sans text-editorial-primary min-h-screen flex flex-col">
+<!-- Top Navigation -->
+<nav class="w-full bg-editorial-bg/95 backdrop-blur-sm border-b border-editorial-border sticky top-0 z-50 px-6 md:px-12 py-5 flex items-center justify-between">
+<div class="font-serif text-3xl font-medium tracking-tight">GlobeTrotter</div>
+<div class="hidden lg:flex items-center gap-8 text-xs font-semibold uppercase tracking-widest text-editorial-secondary">
+<a class="text-editorial-primary hover:opacity-70 transition-opacity" href="#">Home</a>
+<a class="hover:text-editorial-primary transition-colors" href="#">Explore</a>
+<a class="hover:text-editorial-primary transition-colors" href="#">My Trips</a>
+<a class="hover:text-editorial-primary transition-colors" href="#">Plan A Trip</a>
+<a class="hover:text-editorial-primary transition-colors" href="#">About</a>
+</div>
+<div class="flex items-center gap-6">
+<a class="text-xs font-semibold uppercase tracking-widest text-editorial-secondary hover:text-editorial-primary transition-colors" href="#">Sign In</a>
+<button class="bg-editorial-primary text-white text-xs font-semibold uppercase tracking-widest px-6 py-3 rounded-md hover:bg-black transition-colors">
+          Plan My Trip
+        </button>
+<div class="w-10 h-10 rounded-full bg-editorial-border overflow-hidden flex items-center justify-center">
+<span class="material-symbols-outlined text-editorial-secondary">person</span>
+</div>
+</div>
+</nav>
+<!-- Main Content Layout -->
+<div class="w-full flex-1 flex flex-col items-center relative px-6 md:px-12 py-16">
+<div class="w-full max-w-[1500px] flex flex-col lg:flex-row gap-16 lg:gap-24">
+<!-- Left Column (70%) -->
+<main class="w-full lg:w-[70%] flex flex-col gap-24">
+<header class="flex flex-col gap-4">
+<h1 class="font-serif text-6xl lg:text-8xl font-medium text-editorial-primary tracking-tight">Create a New Trip</h1>
+<p class="font-sans text-xl text-editorial-secondary max-w-2xl mt-4">Design your perfect itinerary with Aether Editorial precision.</p>
+</header>
+<!-- Trip Details -->
+<section class="flex flex-col gap-10">
+<div class="grid grid-cols-1 gap-12">
+<div class="flex flex-col gap-4 border-b border-editorial-border pb-4">
+<label class="text-xs font-semibold text-editorial-secondary uppercase tracking-[0.15em]">Trip Name</label>
+<input class="bg-transparent border-none p-0 font-serif text-4xl lg:text-5xl focus:ring-0 focus:outline-none transition-all placeholder:text-editorial-border placeholder:font-serif" placeholder="e.g. Kyoto Autumn Retreat" type="text"/>
+</div>
+<div class="flex flex-col gap-4 border-b border-editorial-border pb-4">
+<label class="text-xs font-semibold text-editorial-secondary uppercase tracking-[0.15em]">Description (Optional)</label>
+<textarea class="bg-transparent border-none p-0 font-sans text-xl h-24 focus:ring-0 focus:outline-none transition-all placeholder:text-editorial-border resize-none" placeholder="What's the vibe of this trip?"></textarea>
+</div>
+</div>
+</section>
+<!-- Destination Selection -->
+<section class="flex flex-col gap-10">
+<h2 class="font-serif text-4xl lg:text-5xl text-editorial-primary">Where are you going?</h2>
+<div class="relative group bg-editorial-beige rounded-xl p-2 flex items-center">
+<span class="material-symbols-outlined absolute left-8 top-1/2 -translate-y-1/2 text-editorial-secondary text-2xl">search</span>
+<input class="w-full bg-transparent border-none pl-16 pr-6 py-6 font-sans text-xl focus:ring-0 focus:outline-none transition-all placeholder:text-editorial-secondary/70" placeholder="Search for a city or destination" type="text"/>
+</div>
+<!-- Selected State Example -->
+<div class="w-full rounded-2xl overflow-hidden relative aspect-[21/9] mt-6">
+<img alt="Tokyo landscape" class="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDTlNKhbVt8Y8_d66mUrmF1h3_xxFfYfDOMK83Nn1zvCJp4apMdxxJ_6zWe462t76jel71rrzBspgRANG1qjZ-N9fglyNB_6RJqL7S4I6acuxqQcPFp9KL7UDZHYz-tliMK6INIU9I1Zuxn65ewFDfIpxuzAYyelWs5RmT663nYE8j35UVF3wD1mhGIJB_o3xdZhlkDbciSz1Lue4SPMoz1Z_ngRDuygQe3JDpvNQWlYm66Yb8msaF"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex flex-col justify-end p-8 md:p-12">
+<div class="flex items-end justify-between w-full">
+<div class="flex items-center gap-6">
+<span class="text-6xl drop-shadow-lg">🇯🇵</span>
+<div>
+<h3 class="font-serif text-5xl text-white drop-shadow-md">Tokyo, Japan</h3>
+<p class="text-xs font-semibold text-white/80 uppercase tracking-[0.15em] mt-3">Selected Destination</p>
+</div>
+</div>
+<button class="text-xs font-bold text-white uppercase tracking-[0.15em] border-b-2 border-white pb-1 hover:text-white/70 hover:border-white/70 transition-all drop-shadow-md">Change</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Date Picker -->
+<section class="flex flex-col gap-10">
+<h2 class="font-serif text-4xl lg:text-5xl text-editorial-primary">When are you traveling?</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+<div class="flex flex-col gap-4 border-b border-editorial-border pb-4">
+<label class="text-xs font-semibold text-editorial-secondary uppercase tracking-[0.15em]">Departure</label>
+<div class="flex items-center gap-4 cursor-pointer hover:opacity-70 transition-opacity">
+<span class="material-symbols-outlined text-editorial-secondary text-2xl">calendar_today</span>
+<span class="font-serif text-3xl">Oct 12, 2024</span>
+</div>
+</div>
+<div class="flex flex-col gap-4 border-b border-editorial-border pb-4">
+<label class="text-xs font-semibold text-editorial-secondary uppercase tracking-[0.15em]">Return</label>
+<div class="flex items-center gap-4 cursor-pointer hover:opacity-70 transition-opacity">
+<span class="material-symbols-outlined text-editorial-secondary text-2xl">calendar_today</span>
+<span class="font-serif text-3xl">Oct 20, 2024</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 text-editorial-secondary">
+<span class="material-symbols-outlined text-lg">schedule</span>
+<span class="text-base font-medium tracking-wide">9 Days · 8 Nights</span>
+</div>
+</section>
+<!-- Suggestions Grid -->
+<section class="flex flex-col gap-12 pt-8">
+<div class="flex justify-between items-end border-b border-editorial-border pb-6">
+<h2 class="font-serif text-4xl lg:text-5xl text-editorial-primary">Curated for Tokyo</h2>
+<button class="text-xs font-semibold text-editorial-primary uppercase tracking-[0.15em] hover:text-editorial-secondary transition-colors pb-2">View All</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-16">
+<!-- Card 1 -->
+<div class="group flex flex-col gap-6">
+<div class="aspect-[4/5] bg-editorial-card rounded-lg overflow-hidden relative">
+<img alt="Senso-ji Temple" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgNDHRFudbWzAktE9cj9usp8w_9eAiZ0GzZPt07xwQGuZcoXULwZIMfuX2zXG8Dxama_hIAUaX_pufCw2DqXWkjDkj4kkxfWZpwQvMk88fPOwcckyKbe6NCtEYm_LXJ9IEAm2CjiAnRjSGckrgodzvbilgRzR_k81YcIbZtL0tL8Tl5VZY2UZoFdqjPJtYbiA6AjATgGBrVt87lvXEPOiYRt4kJcfb7aRMumISrt15dqCu-bsawIM2"/>
+</div>
+<div class="flex flex-col gap-4">
+<div>
+<span class="text-[10px] font-bold text-editorial-secondary uppercase tracking-[0.2em]">Culture</span>
+<h4 class="font-serif text-3xl text-editorial-primary mt-3">Senso-ji Temple</h4>
+</div>
+<div class="flex justify-between items-center text-sm font-medium text-editorial-secondary border-t border-editorial-border pt-4">
+<span>2 Hours</span>
+<span>Complimentary</span>
+</div>
+<button class="w-full py-4 mt-2 rounded-md border border-editorial-primary text-xs font-semibold text-editorial-primary uppercase tracking-[0.15em] hover:bg-editorial-primary hover:text-white transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span> Add
+                </button>
+</div>
+</div>
+<!-- Card 2 (Added State) -->
+<div class="group flex flex-col gap-6 md:mt-16">
+<div class="aspect-[4/5] bg-editorial-card rounded-lg overflow-hidden relative">
+<img alt="Tsukiji Food Tour" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4zhL_-ydvnnkdTFd2LakZ3qA7qxuf28Ea2y2Si8zy_5sGEWciFpwcgU8sxMrmI1JWbmGkwWrIt7Bn3aWpk-w5RL7slLtByaR2Uec5NvRIE9r5uPl18LJyH5JQKqm4szA_fw36LqTMsip5ugf5uozkMkR42_egb2bFnxU2yjuFOrbOX74fOZdF_F-trMUrNg-8wHf26UO8qGp-Nntd2AWBuYisJ4nwko9X913pxWzBrUOmd7Q-6RX6"/>
+</div>
+<div class="flex flex-col gap-4">
+<div>
+<span class="text-[10px] font-bold text-editorial-secondary uppercase tracking-[0.2em]">Gastronomy</span>
+<h4 class="font-serif text-3xl text-editorial-primary mt-3">Tsukiji Food Tour</h4>
+</div>
+<div class="flex justify-between items-center text-sm font-medium text-editorial-secondary border-t border-editorial-border pt-4">
+<span>4 Hours</span>
+<span>$85</span>
+</div>
+<button class="w-full py-4 mt-2 rounded-md bg-editorial-primary text-white text-xs font-semibold uppercase tracking-[0.15em] flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">check</span> Added
+                </button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="group flex flex-col gap-6">
+<div class="aspect-[4/3] bg-editorial-card rounded-lg overflow-hidden relative">
+<img alt="Shibuya Crossing" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfsfM3VJZq0VOGm-83NdbId-OIxAnAfkqRwX9TW4kw8NNIpn-8EloB1cW1_dFkLSJj95Ab3MjmeHiGoP6rjjWTvTXYUnGQAei1OZWkgx_leX5nmFHAEMsHfbX6EOQfoIp2n19v0mTxS-CpBBHfjx1Gdix6cR0-rq8_Q7Z4uOomAlEYBqcGXpLVyr-M9WAJEGRq9GnYwwOrcnpIGXNnbQJbD9IK6HKN5vAD-YsLySrhs-Qsr5y_xFfs"/>
+</div>
+<div class="flex flex-col gap-4">
+<div>
+<span class="text-[10px] font-bold text-editorial-secondary uppercase tracking-[0.2em]">Experience</span>
+<h4 class="font-serif text-3xl text-editorial-primary mt-3">Shibuya Crossing</h4>
+</div>
+<div class="flex justify-between items-center text-sm font-medium text-editorial-secondary border-t border-editorial-border pt-4">
+<span>1 Hour</span>
+<span>Complimentary</span>
+</div>
+<button class="w-full py-4 mt-2 rounded-md border border-editorial-primary text-xs font-semibold text-editorial-primary uppercase tracking-[0.15em] hover:bg-editorial-primary hover:text-white transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span> Add
+                </button>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="group flex flex-col gap-6 md:mt-12">
+<div class="aspect-[4/5] bg-editorial-card rounded-lg overflow-hidden relative">
+<img alt="Shinjuku Gyoen" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAaelLTGWmB4t7H56uKHAPAYVOc7vjD8bGYFVvkA2dpm2FcaqltDjkJYK01dlkEDZJ1RMIITPi3X9K8fOfB1Y9crO8ziZ1oojBYVT985aK1nYgsIjJiZLBdff4los85FpXvl6IZruVQWGM6aUC8GCO9-8X1AaHCNjAnV-4WpyprIlQ7w12G8dwK4rVpst2RJXU6YDEijAgdkfoSU3jmxtNO2Y1LCArFzKtjSlUdN9MdBB2aXdgg34ph"/>
+</div>
+<div class="flex flex-col gap-4">
+<div>
+<span class="text-[10px] font-bold text-editorial-secondary uppercase tracking-[0.2em]">Nature</span>
+<h4 class="font-serif text-3xl text-editorial-primary mt-3">Shinjuku Gyoen</h4>
+</div>
+<div class="flex justify-between items-center text-sm font-medium text-editorial-secondary border-t border-editorial-border pt-4">
+<span>3 Hours</span>
+<span>$5</span>
+</div>
+<button class="w-full py-4 mt-2 rounded-md border border-editorial-primary text-xs font-semibold text-editorial-primary uppercase tracking-[0.15em] hover:bg-editorial-primary hover:text-white transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span> Add
+                </button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Right Column (30%) - Sticky Summary -->
+<aside class="w-full lg:w-[30%] lg:sticky lg:top-[120px] h-auto lg:h-[calc(100vh-120px)] flex flex-col">
+<div class="flex flex-col gap-10">
+<div class="flex flex-col gap-4 pb-8 border-b border-editorial-border">
+<p class="text-[10px] font-bold text-editorial-secondary uppercase tracking-[0.2em]">Itinerary Summary</p>
+<h3 class="font-serif text-4xl text-editorial-primary leading-tight">Kyoto Autumn Retreat</h3>
+<p class="font-sans text-base text-editorial-secondary mt-2">Tokyo, Japan</p>
+</div>
+<div class="flex flex-col gap-8">
+<div class="flex justify-between items-end border-b border-editorial-border pb-4">
+<span class="text-[10px] font-bold text-editorial-secondary uppercase tracking-[0.2em]">Dates</span>
+<span class="font-serif text-2xl text-editorial-primary">Oct 12 — Oct 20</span>
+</div>
+<div class="flex justify-between items-end border-b border-editorial-border pb-4">
+<span class="text-[10px] font-bold text-editorial-secondary uppercase tracking-[0.2em]">Activities</span>
+<span class="font-serif text-2xl text-editorial-primary">1 Selected</span>
+</div>
+<div class="flex justify-between items-end pb-2">
+<span class="text-[10px] font-bold text-editorial-secondary uppercase tracking-[0.2em]">Est. Total</span>
+<span class="font-serif text-4xl text-editorial-primary">$85.00</span>
+</div>
+</div>
+<div class="mt-8">
+<button class="w-full py-5 rounded-md bg-editorial-primary text-white text-xs font-semibold uppercase tracking-[0.2em] hover:bg-black transition-colors flex items-center justify-center gap-3">
+              Create Trip
+              <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</aside>
+</div>
+</div>
+<!-- Footer -->
+<footer class="w-full bg-[#EBE7DF] px-6 md:px-12 py-16 mt-24 border-t border-editorial-border">
+<div class="w-full max-w-[1500px] mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+<div class="font-serif text-3xl font-medium tracking-tight text-editorial-primary">GlobeTrotter</div>
+<div class="flex flex-wrap gap-8 text-xs font-semibold uppercase tracking-widest text-editorial-secondary">
+<a class="hover:text-editorial-primary transition-colors" href="#">Privacy</a>
+<a class="hover:text-editorial-primary transition-colors" href="#">Terms</a>
+<a class="hover:text-editorial-primary transition-colors" href="#">Contact</a>
+</div>
+<p class="text-xs text-editorial-secondary font-medium">© 2024 GlobeTrotter. All rights reserved.</p>
+</div>
+</footer>
+</body></html>

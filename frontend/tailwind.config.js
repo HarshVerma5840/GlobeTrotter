@@ -70,6 +70,14 @@ export default {
         "sand-accent":             "#E8E2D9",
         "premium-navy":            "#0F172A",
         "glass-white":             "rgba(255, 255, 255, 0.6)",
+
+        /* Editorial page tokens (Create Trip) */
+        "editorial-bg":            "#F7F5F0",
+        "editorial-card":          "#FFFFFF",
+        "editorial-primary":       "#111111",
+        "editorial-secondary":     "#6F6A62",
+        "editorial-border":        "#DDD8CF",
+        "editorial-beige":         "#EFEBE3",
       },
 
       /* ── Typography ─────────────────────────────────────────────── */
