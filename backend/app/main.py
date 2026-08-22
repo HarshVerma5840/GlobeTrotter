@@ -9,10 +9,12 @@ from fastapi.responses import JSONResponse
 
 from app.api.routes import (
     activities,
+    admin,
     auth,
     autoplan,
     budget,
     cities,
+    collaboration,
     health,
     itinerary_activities,
     public,
@@ -47,6 +49,8 @@ app.include_router(activities.router)
 app.include_router(budget.router)
 app.include_router(autoplan.router)
 app.include_router(public.router)
+app.include_router(collaboration.router)
+app.include_router(admin.router)
 
 
 @app.exception_handler(DomainValidationError)

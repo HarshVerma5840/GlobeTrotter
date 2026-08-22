@@ -47,3 +47,8 @@ class User(Base):
     saved_cities: Mapped[list["City"]] = relationship(
         secondary=user_saved_cities, back_populates="saved_by_users"
     )
+    # Trips this user was invited to edit — distinct from `trips`, which is
+    # the ones they own (B12, CONTRACTS §7.3).
+    collaborating_trips: Mapped[list["Trip"]] = relationship(
+        secondary="trip_collaborators", back_populates="collaborators"
+    )

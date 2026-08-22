@@ -254,6 +254,11 @@ accepted and quietly weakened.
 | `/activities` | GET | required | query params: `city_id`, `category`, `cost_max` |
 | `/cities`, `/activities` | POST/PATCH | required, `role=catalog_manager` | |
 | `/trips/{id}/budget` | GET | required, owner-or-collaborator | see ARCHITECTURE §5 |
+| `/trips/{id}/collaborators` | GET/POST | required, owner-or-collaborator for GET; owner-only for POST | |
+| `/trips/{id}/collaborators/{user_id}` | DELETE | required, owner-only | |
+| `/itinerary-activities/{id}/vote` | POST | required, owner-or-collaborator | body: `{value: "up" \| "down"}` |
+| `/trips/{id}/comments` | GET/POST | required, owner-or-collaborator | threaded discussion |
+| `/admin/analytics` | GET | required, `role=admin` | aggregates only |
 | `/health` | GET | none | plain `{"status": "ok"}` once DB connects |
 
 ## 5. Security / Access (implementation, see ARCHITECTURE §6 for rationale)

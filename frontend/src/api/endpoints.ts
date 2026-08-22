@@ -16,11 +16,14 @@
 import { query, request, storeToken } from "./client";
 import type {
   Activity,
+  AdminAnalytics,
   ActivityCategory,
   AutoPlanRequest,
   AutoPlanResponse,
   Budget,
   City,
+  Collaborator,
+  Comment,
   ItineraryActivity,
   ItineraryActivityCreate,
   ItineraryActivityUpdate,
@@ -36,6 +39,8 @@ import type {
   TripUpdate,
   User,
   UserUpdate,
+  Vote,
+  VoteValue,
 } from "../types/models";
 
 // --- auth (CONTRACTS §3) --------------------------------------------------
@@ -159,13 +164,58 @@ export const publicTrips = {
   copy: (token: string) => request<Trip>(`/public/trips/${token}/copy`, { method: "POST" }),
 };
 
+// --- collaboration (CONTRACTS §7.3) --------------------------------------
+
+export const collaborators = {
+  list: (tripId: string) => request<Collaborator[]>(`/trips/${tripId}/collaborators`),
+  /** Owner only — a collaborator gets 403 here. Invite by email. */
+  add: (tripId: string, email: string) =>
+    request<Collaborator[]>(`/trips/${tripId}/collaborators`, {
+      method: "POST",
+      json: { email },
+    }),
+  /** Owner only. */
+  remove: (tripId: string, userId: string) =>
+    request<void>(`/trips/${tripId}/collaborators/${userId}`, { method: "DELETE" }),
+};
+
+export const votes = {
+  get: (itineraryActivityId: string) =>
+    request<Vote>(`/itinerary-activities/${itineraryActivityId}/vote`),
+  /** Upserts — voting again changes your vote, it never adds a second. */
+  cast: (itineraryActivityId: string, value: VoteValue) =>
+    request<Vote>(`/itinerary-activities/${itineraryActivityId}/vote`, {
+      method: "POST",
+      json: { value },
+    }),
+  /** Withdraw your vote; absent is the neutral state. */
+  clear: (itineraryActivityId: string) =>
+    request<Vote>(`/itinerary-activities/${itineraryActivityId}/vote`, { method: "DELETE" }),
+};
+
+export const comments = {
+  list: (tripId: string) => request<Comment[]>(`/trips/${tripId}/comments`),
+  add: (tripId: string, body: string) =>
+    request<Comment>(`/trips/${tripId}/comments`, { method: "POST", json: { body } }),
+};
+
+// --- admin (role=admin only) ----------------------------------------------
+
+export const admin = {
+  analytics: () => request<AdminAnalytics>("/admin/analytics"),
+};
+
 // --- health ---------------------------------------------------------------
 
 export const health = () => request<{ status: string }>("/health", { anonymous: true });
 
 /** Everything, for `import { api } from "../api/endpoints"`. */
 export const api = {
+  admin,
   auth,
+  collaborators,
+  comments,
+  votes,
   users,
   trips,
   stops,

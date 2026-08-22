@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.deps import assert_trip_owner, get_current_user, get_owned_trip
 from app.core.errors import DomainValidationError
 from app.db.session import get_db
+from app.models.collaboration import trip_collaborators
 from app.models.stop import Stop
 from app.models.trip import Trip
 from app.models.user import User
@@ -27,9 +28,21 @@ async def list_trips(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> List[Trip]:
-    """Trips owned by the current user, soonest departure first."""
+    """
+    Trips owned by OR shared with the current user (CONTRACTS §4), most
+    recent departure first.
+    """
     result = await db.execute(
-        select(Trip).where(Trip.user_id == current_user.id).order_by(Trip.date_start.desc())
+        select(Trip)
+        .outerjoin(trip_collaborators, trip_collaborators.c.trip_id == Trip.id)
+        .where(
+            (Trip.user_id == current_user.id)
+            | (trip_collaborators.c.user_id == current_user.id)
+        )
+        # A trip with several collaborators would otherwise come back once
+        # per join row.
+        .distinct()
+        .order_by(Trip.date_start.desc())
     )
     return list(result.scalars().all())
 

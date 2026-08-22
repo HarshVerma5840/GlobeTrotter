@@ -254,6 +254,78 @@
         "title": "ActivityUpdate",
         "type": "object"
       },
+      "AdminAnalytics": {
+        "properties": {
+          "average_stops_per_trip": {
+            "title": "Average Stops Per Trip",
+            "type": "number"
+          },
+          "catalog_activities": {
+            "title": "Catalog Activities",
+            "type": "integer"
+          },
+          "catalog_cities": {
+            "title": "Catalog Cities",
+            "type": "integer"
+          },
+          "most_popular_cities": {
+            "items": {
+              "$ref": "#/components/schemas/PopularCity"
+            },
+            "title": "Most Popular Cities",
+            "type": "array"
+          },
+          "public_trips": {
+            "title": "Public Trips",
+            "type": "integer"
+          },
+          "spend_by_category": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "propertyNames": {
+              "$ref": "#/components/schemas/ActivityCategory"
+            },
+            "title": "Spend By Category",
+            "type": "object"
+          },
+          "total_itinerary_activities": {
+            "title": "Total Itinerary Activities",
+            "type": "integer"
+          },
+          "total_planned_spend": {
+            "title": "Total Planned Spend",
+            "type": "string"
+          },
+          "total_stops": {
+            "title": "Total Stops",
+            "type": "integer"
+          },
+          "total_trips": {
+            "title": "Total Trips",
+            "type": "integer"
+          },
+          "total_users": {
+            "title": "Total Users",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total_users",
+          "total_trips",
+          "total_stops",
+          "total_itinerary_activities",
+          "public_trips",
+          "catalog_cities",
+          "catalog_activities",
+          "average_stops_per_trip",
+          "total_planned_spend",
+          "spend_by_category",
+          "most_popular_cities"
+        ],
+        "title": "AdminAnalytics",
+        "type": "object"
+      },
       "AutoPlanRequest": {
         "description": "POST /trips/{id}/auto-plan body.",
         "properties": {
@@ -757,6 +829,104 @@
         "title": "CityUpdate",
         "type": "object"
       },
+      "CollaboratorAdd": {
+        "description": "POST /trips/{id}/collaborators \u2014 invite by email.\n\nEmail rather than user id: the owner knows who they're inviting by\naddress, and exposing a user-id lookup would let anyone enumerate\naccounts.",
+        "properties": {
+          "email": {
+            "format": "email",
+            "title": "Email",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email"
+        ],
+        "title": "CollaboratorAdd",
+        "type": "object"
+      },
+      "CollaboratorRead": {
+        "description": "A collaborator as shown on the trip.\n\nDeliberately not `UserRead`: that carries `role`, `language`, and the\nuser's saved cities, none of which a fellow collaborator needs to see.\nEmail is included because it's how you identify who you invited.",
+        "properties": {
+          "email": {
+            "format": "email",
+            "title": "Email",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "email"
+        ],
+        "title": "CollaboratorRead",
+        "type": "object"
+      },
+      "CommentCreate": {
+        "properties": {
+          "body": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Body",
+            "type": "string"
+          }
+        },
+        "required": [
+          "body"
+        ],
+        "title": "CommentCreate",
+        "type": "object"
+      },
+      "CommentRead": {
+        "properties": {
+          "author_name": {
+            "title": "Author Name",
+            "type": "string"
+          },
+          "body": {
+            "title": "Body",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "trip_id": {
+            "format": "uuid",
+            "title": "Trip Id",
+            "type": "string"
+          },
+          "user_id": {
+            "format": "uuid",
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "trip_id",
+          "user_id",
+          "body",
+          "created_at",
+          "author_name"
+        ],
+        "title": "CommentRead",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -960,6 +1130,34 @@
           }
         },
         "title": "ItineraryActivityUpdate",
+        "type": "object"
+      },
+      "PopularCity": {
+        "properties": {
+          "city_id": {
+            "title": "City Id",
+            "type": "string"
+          },
+          "country": {
+            "title": "Country",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "trip_count": {
+            "title": "Trip Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "city_id",
+          "name",
+          "country",
+          "trip_count"
+        ],
+        "title": "PopularCity",
         "type": "object"
       },
       "PublicTripRead": {
@@ -1780,6 +1978,58 @@
         ],
         "title": "ValidationError",
         "type": "object"
+      },
+      "VoteRead": {
+        "properties": {
+          "itinerary_activity_id": {
+            "format": "uuid",
+            "title": "Itinerary Activity Id",
+            "type": "string"
+          },
+          "my_vote": {
+            "anyOf": [
+              {
+                "enum": [
+                  "up",
+                  "down"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "My Vote"
+          },
+          "vote_score": {
+            "title": "Vote Score",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "itinerary_activity_id",
+          "vote_score"
+        ],
+        "title": "VoteRead",
+        "type": "object"
+      },
+      "VoteWrite": {
+        "description": "POST /itinerary-activities/{id}/vote \u2014 CONTRACTS \u00a77.3.",
+        "properties": {
+          "value": {
+            "enum": [
+              "up",
+              "down"
+            ],
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ],
+        "title": "VoteWrite",
+        "type": "object"
       }
     },
     "securitySchemes": {
@@ -2077,6 +2327,32 @@
         "summary": "Update Activity",
         "tags": [
           "activities"
+        ]
+      }
+    },
+    "/admin/analytics": {
+      "get": {
+        "operationId": "analytics_admin_analytics_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminAnalytics"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Analytics",
+        "tags": [
+          "admin"
         ]
       }
     },
@@ -2564,6 +2840,158 @@
         ]
       }
     },
+    "/itinerary-activities/{itinerary_activity_id}/vote": {
+      "delete": {
+        "description": "Withdraw your vote. Absent row is the neutral state \u2014 there is no `none` value.",
+        "operationId": "clear_vote_itinerary_activities__itinerary_activity_id__vote_delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "itinerary_activity_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Itinerary Activity Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoteRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Clear Vote",
+        "tags": [
+          "collaboration"
+        ]
+      },
+      "get": {
+        "operationId": "read_vote_itinerary_activities__itinerary_activity_id__vote_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "itinerary_activity_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Itinerary Activity Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoteRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Read Vote",
+        "tags": [
+          "collaboration"
+        ]
+      },
+      "post": {
+        "description": "Up/down vote on a proposed activity.\n\nUpserts on the unique (itinerary_activity_id, user_id) constraint \u2014\nchanging your mind UPDATES your row, it never inserts a second\n(CONTRACTS \u00a72).",
+        "operationId": "cast_vote_itinerary_activities__itinerary_activity_id__vote_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "itinerary_activity_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Itinerary Activity Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoteWrite"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoteRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Cast Vote",
+        "tags": [
+          "collaboration"
+        ]
+      }
+    },
     "/public/trips/{token}": {
       "get": {
         "description": "Read-only itinerary for anyone holding the link. No write actions exposed.",
@@ -2918,7 +3346,7 @@
     },
     "/trips": {
       "get": {
-        "description": "Trips owned by the current user, soonest departure first.",
+        "description": "Trips owned by OR shared with the current user (CONTRACTS \u00a74), most\nrecent departure first.",
         "operationId": "list_trips_trips_get",
         "responses": {
           "200": {
@@ -3241,6 +3669,280 @@
         "summary": "Read Budget",
         "tags": [
           "budget"
+        ]
+      }
+    },
+    "/trips/{trip_id}/collaborators": {
+      "get": {
+        "description": "Readable by any collaborator \u2014 you can see who else is on the trip.",
+        "operationId": "list_collaborators_trips__trip_id__collaborators_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "trip_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Trip Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CollaboratorRead"
+                  },
+                  "title": "Response List Collaborators Trips  Trip Id  Collaborators Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "List Collaborators",
+        "tags": [
+          "collaboration"
+        ]
+      },
+      "post": {
+        "description": "Invite an existing user by email. Owner only (CONTRACTS \u00a75).",
+        "operationId": "add_collaborator_trips__trip_id__collaborators_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "trip_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Trip Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CollaboratorAdd"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CollaboratorRead"
+                  },
+                  "title": "Response Add Collaborator Trips  Trip Id  Collaborators Post",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Add Collaborator",
+        "tags": [
+          "collaboration"
+        ]
+      }
+    },
+    "/trips/{trip_id}/collaborators/{user_id}": {
+      "delete": {
+        "description": "Owner only (CONTRACTS \u00a75) \u2014 a collaborator cannot remove anyone.",
+        "operationId": "remove_collaborator_trips__trip_id__collaborators__user_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "User Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "trip_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Trip Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Remove Collaborator",
+        "tags": [
+          "collaboration"
+        ]
+      }
+    },
+    "/trips/{trip_id}/comments": {
+      "get": {
+        "operationId": "list_comments_trips__trip_id__comments_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "trip_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Trip Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CommentRead"
+                  },
+                  "title": "Response List Comments Trips  Trip Id  Comments Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "List Comments",
+        "tags": [
+          "collaboration"
+        ]
+      },
+      "post": {
+        "operationId": "add_comment_trips__trip_id__comments_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "trip_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Trip Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommentCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Add Comment",
+        "tags": [
+          "collaboration"
         ]
       }
     },

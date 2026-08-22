@@ -97,28 +97,22 @@ async def _gather_candidates(db: AsyncSession, request: AutoPlanRequest) -> _Can
             "The city catalog is empty — run the seed script (app.seed) before auto-planning."
         )
 
-    interests = list(request.interest_categories or [])
     activities_by_city: Dict[uuid.UUID, List[Activity]] = {}
     for city in cities:
-        stmt = select(Activity).where(Activity.city_id == city.id)
-        if interests:
-            # Interests filter the shortlist but never make it empty: a city
-            # with no matching activity still needs *something* to schedule,
-            # so we fall back to its full list below.
-            stmt = stmt.where(Activity.category.in_(interests))
-        rows = await db.execute(stmt.order_by(Activity.cost.asc().nullslast(), Activity.name))
-        found = list(rows.scalars().all())
+        rows = await db.execute(
+            select(Activity)
+            .where(Activity.city_id == city.id)
+            .order_by(Activity.cost.asc().nullslast(), Activity.name)
+        )
+        activities_by_city[city.id] = list(rows.scalars().all())[:MAX_CANDIDATE_ACTIVITIES_PER_CITY]
 
-        if not found and interests:
-            rows = await db.execute(
-                select(Activity)
-                .where(Activity.city_id == city.id)
-                .order_by(Activity.cost.asc().nullslast(), Activity.name)
-            )
-            found = list(rows.scalars().all())
-
-        activities_by_city[city.id] = found[:MAX_CANDIDATE_ACTIVITIES_PER_CITY]
-
+    # NOTE: candidates are deliberately NOT filtered by interest_categories.
+    # Interests express a *preference*, and `_score_activity` already ranks
+    # matching categories first — so filtering here as well only shrinks the
+    # pool. With the seed catalog carrying one activity per category per
+    # city, filtering to two interests capped a multi-day stop at two
+    # activities and left most of the trip empty. Ranking without filtering
+    # keeps the user's interests on top AND fills the days.
     return _Candidates(cities=cities, activities_by_city=activities_by_city)
 
 

@@ -39,3 +39,12 @@ class Trip(Base):
     stops: Mapped[list["Stop"]] = relationship(
         back_populates="trip", cascade="all, delete-orphan", order_by="Stop.sequence"
     )
+    # B12 / CONTRACTS §7.3. Collaborators may edit the itinerary but never
+    # `is_public`, `share_token`, or this list — see api/deps.py, where that
+    # split is enforced by two separate helpers.
+    collaborators: Mapped[list["User"]] = relationship(
+        secondary="trip_collaborators", back_populates="collaborating_trips"
+    )
+    comments: Mapped[list["Comment"]] = relationship(
+        back_populates="trip", cascade="all, delete-orphan", order_by="Comment.created_at"
+    )

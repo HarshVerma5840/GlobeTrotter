@@ -10,8 +10,18 @@ from app.models.activity import Activity, ActivityCategory  # noqa: F401
 from app.models.trip import Trip  # noqa: F401
 from app.models.stop import Stop  # noqa: F401
 from app.models.itinerary_activity import ItineraryActivity  # noqa: F401
+from app.models.collaboration import (  # noqa: F401
+    Comment,
+    ItineraryVote,
+    VoteValue,
+    trip_collaborators,
+)
 
 __all__ = [
+    "Comment",
+    "ItineraryVote",
+    "VoteValue",
+    "trip_collaborators",
     "User",
     "UserRole",
     "user_saved_cities",

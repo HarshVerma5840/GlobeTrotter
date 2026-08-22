@@ -16,7 +16,7 @@ Read those before writing code — this README is just the commands.
 ## Build order
 
 Three sequential phases: **A** entire backend → **B** entire UI in Stitch,
-ported to React → **C** integration. Phase A Waves 0–1 are done.
+ported to React → **C** integration. **Phase A is complete** (137 tests passing, real PostgreSQL migrations & catalog seed verified, OpenAPI contract & TypeScript types generated).
 **Anyone about to write UI must read `INTEGRATION.md` first** — it is what
 keeps Phase C mechanical instead of a scramble.
 

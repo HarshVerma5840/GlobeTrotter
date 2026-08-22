@@ -69,7 +69,9 @@ async def reorder_stops(
         raise DomainValidationError("Duplicate stop ids in reorder payload.")
 
     result = await db.execute(
-        select(Stop).options(selectinload(Stop.trip)).where(Stop.id.in_(ids))
+        select(Stop)
+        .options(selectinload(Stop.trip).selectinload(Trip.collaborators))
+        .where(Stop.id.in_(ids))
     )
     stops = {stop.id: stop for stop in result.scalars().all()}
 

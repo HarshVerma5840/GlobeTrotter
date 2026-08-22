@@ -35,3 +35,8 @@ class ItineraryActivity(Base):
 
     stop: Mapped["Stop"] = relationship(back_populates="itinerary_activities")
     activity: Mapped["Activity"] = relationship(back_populates="itinerary_activities")
+    # B12 / CONTRACTS §7.3. `vote_score` on the response is the sum of these
+    # and is display-only — no ranking or reordering logic depends on it.
+    votes: Mapped[list["ItineraryVote"]] = relationship(
+        back_populates="itinerary_activity", cascade="all, delete-orphan"
+    )

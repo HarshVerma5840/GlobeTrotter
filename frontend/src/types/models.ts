@@ -49,6 +49,18 @@ export type ItineraryActivity = S["ItineraryActivityRead"];
 export type ItineraryActivityCreate = S["ItineraryActivityCreate"];
 export type ItineraryActivityUpdate = S["ItineraryActivityUpdate"];
 
+// --- collaboration (B12, CONTRACTS §7.3) ---
+export type Collaborator = S["CollaboratorRead"];
+export type CollaboratorAdd = S["CollaboratorAdd"];
+export type Vote = S["VoteRead"];
+export type VoteValue = S["VoteWrite"]["value"];
+export type Comment = S["CommentRead"];
+export type CommentCreate = S["CommentCreate"];
+
+// --- admin analytics (B13) ---
+export type AdminAnalytics = S["AdminAnalytics"];
+export type PopularCity = S["PopularCity"];
+
 // --- budget / assistant / sharing ---
 export type Budget = S["BudgetRead"];
 export type AutoPlanRequest = S["AutoPlanRequest"];

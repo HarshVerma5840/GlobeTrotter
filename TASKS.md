@@ -12,7 +12,7 @@ parallel:
 
 | Phase | What | Status |
 |---|---|---|
-| **A** | Finish the **entire backend**, all waves | Waves 0–1 done; Wave 3 + B11's Directions path remain |
+| **A** | Finish the **entire backend**, all waves | **DONE** — Waves 0, 1, 3 (B1–B13 complete; B14 blocked on server key). 137 tests passing, PostgreSQL verified |
 | **B** | Generate the **entire UI in Stitch**, then port it into React | Not started |
 | **C** | **Join** the two | Not started |
 
@@ -98,23 +98,75 @@ working core flow.
   `google_place_id` (CONTRACTS §7.4) — polish on top of the P0 City Search
   screen, which must work on local catalog data alone first.
 
-### Wave 3 (P2, only if P0+P1 are demo-solid)
-- **B12** [P2] `trip_collaborators`, `ItineraryVote`, `Comment` tables +
-  their routes (CONTRACTS §7.3), plus the `get_owned_trip` update to
-  include collaborators.
-- **B13** [P2] `GET /admin/analytics` aggregate endpoint, `role=admin`
-  gated.
+### Wave 3 (P2) — B12/B13 **DONE**, B14 blocked
 
-### Phase A exit gate — all of these before Phase B starts
+- **B12** [P2] ✅ `trip_collaborators`, `itinerary_votes`, `trip_comments`
+  tables (migration `0002_collaboration`) + their routes (CONTRACTS §7.3).
+  Access was widened in `assert_trip_access` **only** — `assert_trip_owner`
+  stayed separate, so a collaborator can edit the itinerary but can never
+  publish the trip or manage the collaborator list. `GET /trips` now also
+  returns trips shared with you (CONTRACTS §4), de-duplicated.
+- **B13** [P2] ✅ `GET /admin/analytics`, `role=admin` gated via a dedicated
+  `require_admin` dep — deliberately **not** satisfied by
+  `catalog_manager`, since editing the catalog and reading every user's
+  data are different powers. Aggregates only; never returns anyone's
+  itinerary.
+- **B14** [P2] 🚫 **BLOCKED — needs a second Google API key.** Places-backed
+  city search is server-proxied (CONTRACTS §7.4), and the key currently in
+  `.env` is HTTP-referrer-restricted, so Google rejects it server-side:
+  `"API keys with referer restrictions cannot be used with this API."`
+  Verified against both Places Autocomplete and Directions. Not a code
+  problem — see "Google keys" below. B14 is P2 polish on top of the P0
+  City Search screen, which already works on local catalog data (B7).
 
-- [ ] `python -m pytest` green
-- [ ] **`alembic upgrade head` run against real PostgreSQL 16** — still
-      unverified; the suite runs on in-memory SQLite and the migration was
-      hand-authored. Largest untested assumption in the repo (I3).
-- [ ] `python export_openapi.py` → `contract/openapi.json` committed
-- [ ] `npm run gen:types` → `api.d.ts` regenerated and committed
-- [ ] Seed data loads and covers all six categories with real lat/lng
-- [ ] Live Groq path exercised once by hand with a real key (Q5)
+### Google keys — one is not enough (verified, not theoretical)
+
+CONTRACTS §1 specifies **two** keys, and testing confirmed why:
+
+| Var | Restriction | Used by | Status |
+|---|---|---|---|
+| `VITE_GOOGLE_MAPS_API_KEY` | HTTP referrer | Maps **JS** API, in the browser | ✅ working key in `.env` |
+| `GOOGLE_MAPS_API_KEY` | **must NOT be referrer-restricted** (use IP restriction or leave unrestricted) | Directions + Places, **server-side** | ❌ **missing** |
+
+To unblock B14 and B11's Directions path: in Google Cloud Console create a
+**second** API key, restrict it by IP (or leave unrestricted for the
+hackathon), enable Directions API + Places API on it, and put it in
+`GOOGLE_MAPS_API_KEY`. Never reuse the browser key there, and never put the
+server key in a `VITE_`-prefixed var — anything `VITE_` is compiled into
+the public bundle.
+
+Until then the app is fully functional: feasibility uses the Haversine
+path, and City Search uses the local catalog. Both are the fallbacks
+CONTRACTS §7.2/§7.4 always required.
+
+### Phase A exit gate
+
+- [x] `python -m pytest` green — **137 passing**
+- [x] **Migrations verified against real PostgreSQL.** The full chain
+      (`0001` → `0002`) was run from zero on a fresh database, followed by
+      `alembic check` → *"No new upgrade operations detected"*, and a
+      `downgrade base` → `upgrade head` round trip. This previously looked
+      verified but wasn't: the dev database had been built by
+      `create_all()`, not by the migration, so `alembic check` was
+      validating the models against themselves. Running it on a genuinely
+      empty database is what closed it — and it immediately surfaced a real
+      `created_at` nullability mismatch in `0002`, now fixed.
+      *Note: dev Postgres is **18.3**, CONTRACTS §0 pins **16**. Fine in
+      practice, but the demo should run whichever the compose file uses.*
+- [x] `python export_openapi.py` → `contract/openapi.json` (24 paths, 39 schemas)
+- [x] `npm run gen:types` → `api.d.ts` regenerated; `npm run typecheck` clean
+- [x] Seed data loads — 12 cities, 72 activities, all six categories, real lat/lng
+- [x] **Live Groq path exercised** — `openai/gpt-oss-20b`, real end-to-end
+      auto-plan against Postgres, `source=llm`, 3 stops / 18 activities (Q5)
+- [ ] B14 unblocked, or consciously dropped (needs the server key above)
+
+#### Known limit worth a look before the demo
+
+Seed catalog holds exactly **one activity per category per city** (6 per
+city). A `balanced` pace wants 3/day, so a 3-day stop wants 9 but can only
+get 6. Auto-plan output looks thinner than the pace implies. Adding 2–3
+more activities per city to `app/seed.py` would visibly improve the
+flagship demo — cheap, and higher value than B14.
 
 Freezing the contract here is what lets Phase B proceed without the
 backend moving underneath it.
@@ -281,27 +333,25 @@ Run the full checklist in **`INTEGRATION.md` §7**. Summary of the gates:
 
 ## Where things stand, and what to watch
 
-**Done:** Phase A Waves 0–1 (B1–B11, with B11 partial), Integration Wave 0,
-and the Phase C tooling built early on purpose — the frozen contract,
-generated types, and typed API client (`INTEGRATION.md` §1).
+**Done:** Phase A is complete: Waves 0, 1, and 3 (B1–B13 done, B14 blocked on second Google key). Migrations `0001` and `0002` applied and tested against real PostgreSQL. Catalog seeded with 12 cities & 72 activities across 6 categories. Full test suite (137 tests) passing. Contract exported (`contract/openapi.json`) and frontend types regenerated (`api.d.ts`, `models.ts`, `endpoints.ts`).
 
-**Next:** Phase A Wave 3 (B12–B14) and the Phase A exit gate, then Phase B.
+**Next:** Phase B (UI generation in Stitch, then porting to React).
 
-### The three risks this build order creates
+### Key risks and status
 
 1. **Integration is deferred to the end.** That is the deliberate trade for
    a better-looking UI, and `INTEGRATION.md` is the mitigation. It only
    works if the contract is regenerated on every backend change — skipping
    that turns a compile error into a demo-day bug.
-2. **Nothing has run against real PostgreSQL.** Tests use in-memory SQLite
-   and the migration is hand-authored. Clear this at the Phase A exit gate,
-   not during Phase C.
+2. ~~**Nothing has run against real PostgreSQL.**~~ **Cleared.** Real PostgreSQL
+   instance configured, migrations `0001` and `0002` executed cleanly, seed
+   catalog populated, and backend integration tests verified.
 3. **No screen has rendered yet.** The client and types are verified by
    `tsc` only. Port one screen early and review it before committing to
    the other fourteen.
 
-### If you have spare hands
+### Next Steps
 
-They go on **Phase B porting**, not Backend — the remaining backend work is
-all P2 (B12–B14) and none of it is on the demo path. Frontend still carries
-the largest P0 surface area, exactly as it did under the parallel plan.
+Work moves directly to **Phase B porting** — all backend P0/P1 and P2 (B12–B13)
+work is complete. Frontend carries the active surface area (screens 1–15).
+

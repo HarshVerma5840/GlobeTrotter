@@ -179,11 +179,25 @@ row on every drag will be visibly slow and violates CONTRACTS §4.
 ### 3.11 CORS and the two Google keys
 
 `CORS_ORIGINS` must contain the frontend's actual origin or every call
-fails in the browser while working fine in curl. And there are **two**
-Maps keys — `GOOGLE_MAPS_API_KEY` (server, secret) and
-`VITE_GOOGLE_MAPS_API_KEY` (browser, referrer-restricted). Anything
-prefixed `VITE_` is compiled into the bundle and is public by definition;
-never put the server key there.
+fails in the browser while working fine in curl.
+
+**The two Maps keys are not interchangeable — this was verified, not
+assumed.** A referrer-restricted key used server-side returns:
+
+```
+REQUEST_DENIED — API keys with referer restrictions cannot be used with this API.
+```
+
+| Var | Restriction | Consumer |
+|---|---|---|
+| `VITE_GOOGLE_MAPS_API_KEY` | HTTP referrer | Maps **JS** API, browser (`TripMap.tsx`) |
+| `GOOGLE_MAPS_API_KEY` | IP-restricted or unrestricted — **never referrer** | Directions + Places, server-side |
+
+Anything prefixed `VITE_` is compiled into the public bundle, so the server
+key must never go there. As of now only the browser key is configured, so
+the server-side Directions and Places paths are unavailable and the app
+runs on its documented fallbacks (Haversine distances, local-catalog city
+search). **Screens must not assume `distance_source === "directions"`.**
 
 ---
 
@@ -225,7 +239,13 @@ API doesn't serve.
 | 13 | Profile | `/profile` | `users.me`, `users.updateMe` | `User` |
 | 14 | Smart Trip Assistant | modal on #6 | `trips.autoPlan` | `AutoPlanRequest/Response` |
 | 15 | Route Map | panel on #7 | none (reads `TripDetail.stops`) | `Stop[]` |
-| 16 | Admin *(P2)* | `/admin` | *not built* | — |
+| 16 | Admin *(P2)* | `/admin` | `admin.analytics` — 403 unless `role=admin` | `AdminAnalytics` |
+| 17 | Collaboration *(P2)* | panels on #6/#7 | `collaborators.*`, `votes.*`, `comments.*` | `Collaborator`, `Vote`, `Comment` |
+
+**Collaboration UI rule (CONTRACTS §5):** the invite/remove controls and
+the publish toggle must be **hidden or disabled for collaborators** — only
+the trip owner may use them. Compare `trip.user_id` against the current
+user; don't rely on catching the 403 after the fact.
 
 **Screens 6, 10, 11, 12, 14, 15 are the demo.** If Stitch time is short,
 those get the polish.
@@ -303,15 +323,21 @@ Run top to bottom. Everything above `—` is a hard gate.
 
 Honest list of what this rulebook does **not** de-risk:
 
-1. **`alembic upgrade head` has never run against real Postgres.** The test
-   suite runs on in-memory SQLite; the migration was hand-authored. This is
-   the single largest untested assumption in the repo and should be
-   cleared before Phase B, not during Phase C.
+1. ~~`alembic upgrade head` has never run against real Postgres.~~
+   **Cleared.** The full chain runs from zero on a fresh PostgreSQL
+   database with `alembic check` reporting no drift, plus a
+   downgrade/re-upgrade round trip.
 2. **Stitch's visual output may not match the 16 screens above.** Prompt it
    from §5, and check the inventory before porting anything.
 3. **No frontend screen exists yet**, so the client/types in this repo are
    verified by `tsc` only — not by a rendered page. The first ported screen
    is the real test of §6; do it early and alone rather than porting all
    sixteen and discovering a systemic problem.
-4. **B11's Google Directions path and B12–B14 are not built** — see
-   `TASKS.md`. Screens must not assume `distance_source === "directions"`.
+4. **B11's Directions path and B14 (Places search) are not built** — both
+   need a server-side Google key that doesn't exist yet (§3.11). Screens
+   must not assume `distance_source === "directions"`. B12 and B13 **are**
+   built, so collaborators, votes, comments, and admin analytics are
+   available (see §5 rows 16–17).
+5. **Auto-plan output is limited by seed density** — one activity per
+   category per city means a `packed` pace cannot actually fill every day.
+   Cosmetic, but visible in the flagship demo.

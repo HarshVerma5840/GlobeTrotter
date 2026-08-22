@@ -83,7 +83,12 @@ async def get_owned_trip(
     Collaborator access (CONTRACTS §7.3) is Wave 3 / B12; when the
     trip_collaborators table lands, widen the check HERE and nowhere else.
     """
-    trip = await db.get(Trip, trip_id)
+    # Collaborators must be loaded eagerly: assert_trip_access reads them,
+    # and a lazy load there would raise MissingGreenlet under async.
+    result = await db.execute(
+        select(Trip).options(selectinload(Trip.collaborators)).where(Trip.id == trip_id)
+    )
+    trip = result.scalar_one_or_none()
     if trip is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trip not found")
     assert_trip_access(trip, current_user)
@@ -92,16 +97,22 @@ async def get_owned_trip(
 
 def assert_trip_access(trip: Trip, current_user: User) -> None:
     """
-    The one trip-access rule, extracted so the stop- and activity-scoped
-    dependencies below enforce it identically instead of re-deriving it.
+    The one trip-access rule (CONTRACTS §5).
 
-    Widen this (and only this) when collaborators land in B12.
+    Owner OR collaborator may read and edit the itinerary. This is the only
+    place access is widened — B12 changed this function and nothing else,
+    which is exactly why every trip-scoped route was made to depend on it.
+
+    Requires `trip.collaborators` to be loaded.
     """
-    if trip.user_id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You do not have access to this trip.",
-        )
+    if trip.user_id == current_user.id:
+        return
+    if any(c.id == current_user.id for c in trip.collaborators):
+        return
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="You do not have access to this trip.",
+    )
 
 
 def assert_trip_owner(trip: Trip, current_user: User) -> None:
@@ -109,9 +120,9 @@ def assert_trip_owner(trip: Trip, current_user: User) -> None:
     Stricter than access: the OWNER only, never a collaborator.
 
     CONTRACTS §5 reserves `is_public`, `share_token`, and the collaborator
-    list for the owner. Today access and ownership coincide, but this stays
-    a separate call so B12 cannot accidentally hand collaborators the
-    sharing controls by widening one check.
+    list for the owner. Keeping this separate from `assert_trip_access` is
+    what let B12 widen editing access without also handing collaborators
+    the ability to publish the trip or invite more people.
     """
     if trip.user_id != current_user.id:
         raise HTTPException(
@@ -130,7 +141,9 @@ async def get_owned_stop(
     keyed by stop id). Same 404-before-403 reasoning as get_owned_trip.
     """
     result = await db.execute(
-        select(Stop).options(selectinload(Stop.trip)).where(Stop.id == stop_id)
+        select(Stop)
+        .options(selectinload(Stop.trip).selectinload(Trip.collaborators))
+        .where(Stop.id == stop_id)
     )
     stop = result.scalar_one_or_none()
     if stop is None:
@@ -147,7 +160,11 @@ async def get_owned_itinerary_activity(
     """Load an itinerary activity via its stop's trip, applying the same rule."""
     result = await db.execute(
         select(ItineraryActivity)
-        .options(selectinload(ItineraryActivity.stop).selectinload(Stop.trip))
+        .options(
+            selectinload(ItineraryActivity.stop)
+            .selectinload(Stop.trip)
+            .selectinload(Trip.collaborators)
+        )
         .where(ItineraryActivity.id == itinerary_activity_id)
     )
     item = result.scalar_one_or_none()
@@ -157,6 +174,23 @@ async def get_owned_itinerary_activity(
         )
     assert_trip_access(item.stop.trip, current_user)
     return item
+
+
+async def require_admin(current_user: User = Depends(get_current_user)) -> User:
+    """
+    CONTRACTS §2: `/admin/analytics` is `role=admin` only.
+
+    Deliberately NOT satisfied by `catalog_manager` — catalog editing and
+    seeing every user's data are different powers, and folding them into
+    one role is how a "manage the city list" account quietly becomes an
+    account that can read the whole platform.
+    """
+    if current_user.role is not UserRole.admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Administrator access required.",
+        )
+    return current_user
 
 
 async def require_catalog_manager(current_user: User = Depends(get_current_user)) -> User:

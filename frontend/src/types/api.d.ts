@@ -47,6 +47,23 @@ export interface paths {
         patch: operations["update_activity_activities__activity_id__patch"];
         trace?: never;
     };
+    "/admin/analytics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Analytics */
+        get: operations["analytics_admin_analytics_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/login": {
         parameters: {
             query?: never;
@@ -165,6 +182,35 @@ export interface paths {
         head?: never;
         /** Update Itinerary Activity */
         patch: operations["update_itinerary_activity_itinerary_activities__itinerary_activity_id__patch"];
+        trace?: never;
+    };
+    "/itinerary-activities/{itinerary_activity_id}/vote": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Vote */
+        get: operations["read_vote_itinerary_activities__itinerary_activity_id__vote_get"];
+        put?: never;
+        /**
+         * Cast Vote
+         * @description Up/down vote on a proposed activity.
+         *
+         *     Upserts on the unique (itinerary_activity_id, user_id) constraint —
+         *     changing your mind UPDATES your row, it never inserts a second
+         *     (CONTRACTS §2).
+         */
+        post: operations["cast_vote_itinerary_activities__itinerary_activity_id__vote_post"];
+        /**
+         * Clear Vote
+         * @description Withdraw your vote. Absent row is the neutral state — there is no `none` value.
+         */
+        delete: operations["clear_vote_itinerary_activities__itinerary_activity_id__vote_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/public/trips/{token}": {
@@ -289,7 +335,8 @@ export interface paths {
         };
         /**
          * List Trips
-         * @description Trips owned by the current user, soonest departure first.
+         * @description Trips owned by OR shared with the current user (CONTRACTS §4), most
+         *     recent departure first.
          */
         get: operations["list_trips_trips_get"];
         put?: never;
@@ -370,6 +417,68 @@ export interface paths {
         get: operations["read_budget_trips__trip_id__budget_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/trips/{trip_id}/collaborators": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Collaborators
+         * @description Readable by any collaborator — you can see who else is on the trip.
+         */
+        get: operations["list_collaborators_trips__trip_id__collaborators_get"];
+        put?: never;
+        /**
+         * Add Collaborator
+         * @description Invite an existing user by email. Owner only (CONTRACTS §5).
+         */
+        post: operations["add_collaborator_trips__trip_id__collaborators_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/trips/{trip_id}/collaborators/{user_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Remove Collaborator
+         * @description Owner only (CONTRACTS §5) — a collaborator cannot remove anyone.
+         */
+        delete: operations["remove_collaborator_trips__trip_id__collaborators__user_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/trips/{trip_id}/comments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Comments */
+        get: operations["list_comments_trips__trip_id__comments_get"];
+        put?: never;
+        /** Add Comment */
+        post: operations["add_comment_trips__trip_id__comments_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -493,6 +602,33 @@ export interface components {
             image_url?: string | null;
             /** Name */
             name?: string | null;
+        };
+        /** AdminAnalytics */
+        AdminAnalytics: {
+            /** Average Stops Per Trip */
+            average_stops_per_trip: number;
+            /** Catalog Activities */
+            catalog_activities: number;
+            /** Catalog Cities */
+            catalog_cities: number;
+            /** Most Popular Cities */
+            most_popular_cities: components["schemas"]["PopularCity"][];
+            /** Public Trips */
+            public_trips: number;
+            /** Spend By Category */
+            spend_by_category: {
+                [key: string]: string;
+            };
+            /** Total Itinerary Activities */
+            total_itinerary_activities: number;
+            /** Total Planned Spend */
+            total_planned_spend: string;
+            /** Total Stops */
+            total_stops: number;
+            /** Total Trips */
+            total_trips: number;
+            /** Total Users */
+            total_users: number;
         };
         /**
          * AutoPlanRequest
@@ -674,6 +810,75 @@ export interface components {
             /** Popularity */
             popularity?: number | null;
         };
+        /**
+         * CollaboratorAdd
+         * @description POST /trips/{id}/collaborators — invite by email.
+         *
+         *     Email rather than user id: the owner knows who they're inviting by
+         *     address, and exposing a user-id lookup would let anyone enumerate
+         *     accounts.
+         */
+        CollaboratorAdd: {
+            /**
+             * Email
+             * Format: email
+             */
+            email: string;
+        };
+        /**
+         * CollaboratorRead
+         * @description A collaborator as shown on the trip.
+         *
+         *     Deliberately not `UserRead`: that carries `role`, `language`, and the
+         *     user's saved cities, none of which a fellow collaborator needs to see.
+         *     Email is included because it's how you identify who you invited.
+         */
+        CollaboratorRead: {
+            /**
+             * Email
+             * Format: email
+             */
+            email: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+        };
+        /** CommentCreate */
+        CommentCreate: {
+            /** Body */
+            body: string;
+        };
+        /** CommentRead */
+        CommentRead: {
+            /** Author Name */
+            author_name: string;
+            /** Body */
+            body: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Trip Id
+             * Format: uuid
+             */
+            trip_id: string;
+            /**
+             * User Id
+             * Format: uuid
+             */
+            user_id: string;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -745,6 +950,17 @@ export interface components {
             scheduled_date?: string | null;
             /** Scheduled Time */
             scheduled_time?: number | null;
+        };
+        /** PopularCity */
+        PopularCity: {
+            /** City Id */
+            city_id: string;
+            /** Country */
+            country: string;
+            /** Name */
+            name: string;
+            /** Trip Count */
+            trip_count: number;
         };
         /**
          * PublicTripRead
@@ -1096,6 +1312,29 @@ export interface components {
             /** Error Type */
             type: string;
         };
+        /** VoteRead */
+        VoteRead: {
+            /**
+             * Itinerary Activity Id
+             * Format: uuid
+             */
+            itinerary_activity_id: string;
+            /** My Vote */
+            my_vote?: ("up" | "down") | null;
+            /** Vote Score */
+            vote_score: number;
+        };
+        /**
+         * VoteWrite
+         * @description POST /itinerary-activities/{id}/vote — CONTRACTS §7.3.
+         */
+        VoteWrite: {
+            /**
+             * Value
+             * @enum {string}
+             */
+            value: "up" | "down";
+        };
     };
     responses: never;
     parameters: never;
@@ -1236,6 +1475,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    analytics_admin_analytics_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminAnalytics"];
                 };
             };
         };
@@ -1513,6 +1772,103 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ItineraryActivityRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_vote_itinerary_activities__itinerary_activity_id__vote_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                itinerary_activity_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoteRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cast_vote_itinerary_activities__itinerary_activity_id__vote_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                itinerary_activity_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VoteWrite"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoteRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    clear_vote_itinerary_activities__itinerary_activity_id__vote_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                itinerary_activity_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoteRead"];
                 };
             };
             /** @description Validation Error */
@@ -1952,6 +2308,168 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BudgetRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_collaborators_trips__trip_id__collaborators_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                trip_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CollaboratorRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_collaborator_trips__trip_id__collaborators_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                trip_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CollaboratorAdd"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CollaboratorRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    remove_collaborator_trips__trip_id__collaborators__user_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+                trip_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_comments_trips__trip_id__comments_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                trip_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CommentRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_comment_trips__trip_id__comments_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                trip_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CommentCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CommentRead"];
                 };
             };
             /** @description Validation Error */

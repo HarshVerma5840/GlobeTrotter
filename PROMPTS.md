@@ -8,14 +8,10 @@
 >
 > **A** entire backend → **B** entire UI in Stitch, ported to React → **C** integration.
 >
-> **Current state:** the Setup prompt (§0) and most of the Backend prompt
-> (§1) are already done — Phase A Waves 0–1 have landed. The **Frontend
-> Track Prompt (§2) is superseded** by the Phase B prompt below; do not run
-> it as written, because it assumes hand-built screens and a frontend
-> running concurrently with backend changes.
+> **Current state:** Phase A is **complete** (Waves 0, 1, and 3 landed with 137 passing tests, real PostgreSQL migrations & seed verified, and contract frozen in `contract/openapi.json`).
 >
-> Use **§5 (Phase A finish)** and **§6 (Phase B)** below. Sections 0–4 are
-> kept for reference and for the Integration/QA prompts, which still apply.
+> Use **§6 (Phase B)** below for generating and porting Stitch UI screens.
+> Sections 0–4 are kept for reference and for the Integration/QA prompts, which still apply.
 
 ---
 
