@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
 import CreateTrip from "./pages/CreateTrip";
+import Profile from "./pages/Profile";
 import ItineraryBuilder from "./pages/ItineraryBuilder";
 
 /**
@@ -18,6 +19,7 @@ export default function App() {
       <Route element={<Layout />}>
         <Route path="/" element={<Dashboard />} />
         <Route path="/trips/new" element={<CreateTrip />} />
+        <Route path="/profile" element={<Profile />} />
         {/* Future pages:
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
@@ -28,7 +30,6 @@ export default function App() {
           <Route path="/trips/:id/budget" element={<Budget />} />
           <Route path="/trips/:id/calendar" element={<Calendar />} />
           <Route path="/share/:token" element={<PublicShare />} />
-          <Route path="/profile" element={<Profile />} />
           <Route path="/auto-plan/:id" element={<AutoPlanWizard />} />
         */}
       </Route>
