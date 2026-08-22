@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
 import CreateTrip from "./pages/CreateTrip";
+import MyTrips from "./pages/MyTrips";
 import Profile from "./pages/Profile";
 import ItineraryBuilder from "./pages/ItineraryBuilder";
 
@@ -19,11 +20,11 @@ export default function App() {
       <Route element={<Layout />}>
         <Route path="/" element={<Dashboard />} />
         <Route path="/trips/new" element={<CreateTrip />} />
+        <Route path="/trips" element={<MyTrips />} />
         <Route path="/profile" element={<Profile />} />
         {/* Future pages:
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/trips" element={<MyTrips />} />
           <Route path="/trips/:id/view" element={<ItineraryView />} />
           <Route path="/cities" element={<CitySearch />} />
           <Route path="/activities" element={<ActivitySearch />} />
