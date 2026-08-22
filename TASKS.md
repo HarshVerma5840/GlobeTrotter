@@ -40,25 +40,38 @@ demo-solid, per the skill's priority order: P0 → testing → UX polish → P1 
   populated for every row (non-negotiable, CONTRACTS §2/§8) and a real
   spread across all six activity categories.
 
-### Wave 1 (after B1–B4 land)
-- **B6** [P0] Trip/Stop/ItineraryActivity CRUD routes + `PATCH
+### Wave 1 (after B1–B4 land) — **DONE**, except where noted below
+
+- **B6** [P0] ✅ Trip/Stop/ItineraryActivity CRUD routes + `PATCH
   /stops/reorder` (batched, not one call per row) — CONTRACTS §4.
-- **B7** [P0] City/Activity search routes with the documented filter
+- **B7** [P0] ✅ City/Activity search routes with the documented filter
   query params.
-- **B8** [P0] `GET /trips/{id}/budget` aggregation (`GROUP BY` query, not a
+- **B8** [P0] ✅ `GET /trips/{id}/budget` aggregation (`GROUP BY` query, not a
   stored/cached field — ARCHITECTURE §5).
-- **B9** [P1] Public share routes (CONTRACTS §6), token-scoped, no auth
-  dependency.
-- **B10** [P1] Smart Trip Assistant: `services/autoplan.py` — Groq client
+- **B9** [P1] ✅ Public share routes (CONTRACTS §6), token-scoped, no auth
+  dependency. Publishing mints `share_token` on the owner-only `is_public`
+  toggle and never regenerates it, so a shared link survives a
+  private/public round trip.
+- **B10** [P1] ✅ Smart Trip Assistant: `services/autoplan.py` — Groq client
   call + prompt template (grounded in real DB candidates), DB-validation
-  step, deterministic fallback (build the fallback first, it's the safety
-  net), `POST /trips/{id}/auto-plan` (CONTRACTS §7.1). Requires
-  `GROQ_API_KEY` to exercise the LLM path — must still work without it.
-- **B11** [P1] `services/feasibility.py` — Google Directions API call
-  (server-side, `GOOGLE_MAPS_API_KEY`) as primary distance/duration
-  source, Haversine as fallback for any city pair Directions can't route,
-  per-city-pair result caching, and the computed fields exposed on stop
-  responses (CONTRACTS §7.2).
+  step, deterministic fallback (built first, it's the safety net),
+  `POST /trips/{id}/auto-plan` (CONTRACTS §7.1). The fallback path is
+  covered by tests; the live Groq path still needs a real `GROQ_API_KEY`
+  exercised once by hand (feeds QA's Q5).
+  Design note: Groq picks *what* (cities/activities), the service computes
+  *when* (all date maths) — the model is never asked to produce a date.
+  Auto-plan is non-destructive: it fills the days after any existing stop
+  rather than clearing hand-built work.
+- **B11** [P1] ⚠️ **PARTIAL** `services/feasibility.py` — the Haversine path,
+  the pinned threshold, and all five computed fields
+  (`distance_from_previous_km`, `travel_duration_hours`, `distance_source`,
+  `travel_gap_days`, `is_feasible`) are live on every stop response.
+  **Not yet built:** the Google Directions primary path and its per-city-pair
+  cache. Deliberate scope call for demo-critical time, not an oversight —
+  the fallback CONTRACTS §7.2 requires is the half that has no external
+  dependency, so the feature cannot be taken down by a missing key or venue
+  Wi-Fi. Adding Directions is a change inside `_measure()` alone: no route,
+  schema, or frontend change follows from it. See the module docstring.
 - **B14** [P2] Places-backed city search: `GET /cities/places-search`,
   `POST /cities/from-place` upserting a `City` row keyed on
   `google_place_id` (CONTRACTS §7.4) — polish on top of the P0 City Search

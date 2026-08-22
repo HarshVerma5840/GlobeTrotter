@@ -7,7 +7,19 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api.routes import auth, health, users
+from app.api.routes import (
+    activities,
+    auth,
+    autoplan,
+    budget,
+    cities,
+    health,
+    itinerary_activities,
+    public,
+    stops,
+    trips,
+    users,
+)
 from app.core.config import settings
 from app.core.errors import DomainValidationError
 
@@ -24,6 +36,17 @@ app.add_middleware(
 app.include_router(health.router)
 app.include_router(auth.router)
 app.include_router(users.router)
+app.include_router(trips.router)
+# stops must be included before any other router that could claim
+# /stops/{stop_id} — its literal /stops/reorder path is declared first
+# inside the module for the same reason (see stops.py docstring).
+app.include_router(stops.router)
+app.include_router(itinerary_activities.router)
+app.include_router(cities.router)
+app.include_router(activities.router)
+app.include_router(budget.router)
+app.include_router(autoplan.router)
+app.include_router(public.router)
 
 
 @app.exception_handler(DomainValidationError)

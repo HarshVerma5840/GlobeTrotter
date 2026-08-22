@@ -342,6 +342,14 @@ normal itinerary builder.
 
 ### 7.2 Route Map & Feasibility Check (Google Maps + Directions, Haversine as fallback only)
 
+> **Implementation status (backend, B11):** the Haversine path, the pinned
+> threshold, and all the computed fields below are built and tested. The
+> Google Directions primary path and its per-city-pair cache are **not yet
+> built** — `distance_source` therefore always reads `haversine` today.
+> This is a scope note, not a contract change: the target below still
+> stands, and the response shape already matches it, so adding Directions
+> changes no route, schema, or frontend code.
+
 - Primary distance/duration source: **Google Directions API**, called
   server-side (never from the browser — keeps `GOOGLE_MAPS_API_KEY` off the
   client) from `services/feasibility.py`, for the city-pair between a stop

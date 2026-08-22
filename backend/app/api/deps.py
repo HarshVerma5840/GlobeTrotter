@@ -16,6 +16,8 @@ from sqlalchemy.orm import selectinload
 
 from app.core.security import decode_access_token
 from app.db.session import get_db
+from app.models.itinerary_activity import ItineraryActivity
+from app.models.stop import Stop
 from app.models.trip import Trip
 from app.models.user import User, UserRole
 
@@ -84,12 +86,77 @@ async def get_owned_trip(
     trip = await db.get(Trip, trip_id)
     if trip is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trip not found")
+    assert_trip_access(trip, current_user)
+    return trip
+
+
+def assert_trip_access(trip: Trip, current_user: User) -> None:
+    """
+    The one trip-access rule, extracted so the stop- and activity-scoped
+    dependencies below enforce it identically instead of re-deriving it.
+
+    Widen this (and only this) when collaborators land in B12.
+    """
     if trip.user_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You do not have access to this trip.",
         )
-    return trip
+
+
+def assert_trip_owner(trip: Trip, current_user: User) -> None:
+    """
+    Stricter than access: the OWNER only, never a collaborator.
+
+    CONTRACTS §5 reserves `is_public`, `share_token`, and the collaborator
+    list for the owner. Today access and ownership coincide, but this stays
+    a separate call so B12 cannot accidentally hand collaborators the
+    sharing controls by widening one check.
+    """
+    if trip.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only the trip owner may change sharing settings.",
+        )
+
+
+async def get_owned_stop(
+    stop_id: uuid.UUID,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> Stop:
+    """
+    Load a stop on a trip the current user may touch (CONTRACTS §4 routes
+    keyed by stop id). Same 404-before-403 reasoning as get_owned_trip.
+    """
+    result = await db.execute(
+        select(Stop).options(selectinload(Stop.trip)).where(Stop.id == stop_id)
+    )
+    stop = result.scalar_one_or_none()
+    if stop is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Stop not found")
+    assert_trip_access(stop.trip, current_user)
+    return stop
+
+
+async def get_owned_itinerary_activity(
+    itinerary_activity_id: uuid.UUID,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> ItineraryActivity:
+    """Load an itinerary activity via its stop's trip, applying the same rule."""
+    result = await db.execute(
+        select(ItineraryActivity)
+        .options(selectinload(ItineraryActivity.stop).selectinload(Stop.trip))
+        .where(ItineraryActivity.id == itinerary_activity_id)
+    )
+    item = result.scalar_one_or_none()
+    if item is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Itinerary activity not found"
+        )
+    assert_trip_access(item.stop.trip, current_user)
+    return item
 
 
 async def require_catalog_manager(current_user: User = Depends(get_current_user)) -> User:
