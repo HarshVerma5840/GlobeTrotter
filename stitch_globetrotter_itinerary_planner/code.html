@@ -1,0 +1,221 @@
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&amp;family=Hanken+Grotesk:wght@400;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={theme:{extend:{"colors":{"tertiary-fixed":"#e5e2e1","glass-white":"rgba(255,255,255,0.6)","on-primary":"#ffffff","surface-bright":"#faf9f8","surface-variant":"#e3e2e1","on-secondary-fixed-variant":"#494640","surface":"#faf9f8","surface-dim":"#dadad9","inverse-surface":"#2f3130","ink-charcoal":"#1A1A1A","sand-accent":"#E8E2D9","tertiary-container":"#1c1b1b","on-error-container":"#93000a","surface-tint":"#565e74","primary-container":"#131b2e","on-surface":"#1a1c1c","tertiary":"#000000","primary-fixed":"#dae2fd","inverse-on-surface":"#f1f0f0","primary":"#000000","surface-container-high":"#e9e8e7","secondary-fixed":"#e8e2d9","secondary-fixed-dim":"#cbc6bd","tertiary-fixed-dim":"#c8c6c5","on-tertiary":"#ffffff","surface-container":"#eeeeed","on-secondary-container":"#67645d","inverse-primary":"#bec6e0","secondary-container":"#e8e2d9","outline-variant":"#c6c6cd","on-secondary":"#ffffff","on-tertiary-fixed-variant":"#474746","background-cream":"#FDFCFB","on-tertiary-container":"#858383","on-primary-fixed-variant":"#3f465c","background":"#faf9f8","on-primary-container":"#7c839b","primary-fixed-dim":"#bec6e0","surface-container-low":"#f4f3f2","surface-container-highest":"#e3e2e1","secondary":"#615e57","on-error":"#ffffff","on-surface-variant":"#45464d","error-container":"#ffdad6","on-secondary-fixed":"#1d1b16","premium-navy":"#0F172A","error":"#ba1a1a","on-tertiary-fixed":"#1c1b1b","surface-container-lowest":"#ffffff","on-primary-fixed":"#131b2e","on-background":"#1a1c1c","outline":"#76777d"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"section-v-gap":"120px","gutter":"32px","margin-desktop":"80px","margin-mobile":"20px","margin-tablet":"40px","content-v-gap":"24px"},"fontFamily":{"display-xl-mobile":["EB Garamond"],"body-md":["Hanken Grotesk"],"display-xl":["EB Garamond"],"label-lg":["Hanken Grotesk"],"label-sm":["Hanken Grotesk"],"headline-lg-mobile":["EB Garamond"],"body-lg":["Hanken Grotesk"],"headline-md":["EB Garamond"],"headline-lg":["EB Garamond"]},"fontSize":{"display-xl-mobile":["48px",{"lineHeight":"56px","letterSpacing":"-0.01em","fontWeight":"400"}],"body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}],"display-xl":["72px",{"lineHeight":"80px","letterSpacing":"-0.02em","fontWeight":"400"}],"label-lg":["14px",{"lineHeight":"20px","letterSpacing":"0.05em","fontWeight":"600"}],"label-sm":["11px",{"lineHeight":"16px","letterSpacing":"0.08em","fontWeight":"700"}],"headline-lg-mobile":["32px",{"lineHeight":"40px","fontWeight":"500"}],"body-lg":["20px",{"lineHeight":"32px","fontWeight":"400"}],"headline-md":["32px",{"lineHeight":"40px","fontWeight":"500"}],"headline-lg":["40px",{"lineHeight":"48px","fontWeight":"500"}]}}}}</script></head><body class="bg-background font-body-md text-on-surface"><header class="fixed top-0 w-full z-50 transition-all duration-300 bg-glass-white backdrop-blur-md"><div class="h-20 max-w-[1440px] mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop flex items-center justify-between"><div class="flex items-center gap-2"><span class="font-headline-lg text-headline-lg tracking-tighter text-primary">GlobeTrotter</span></div><nav class="hidden lg:flex items-center gap-gutter" data-active-classes="text-primary font-bold"><a aria-current="page" class="transition-colors uppercase text-primary font-bold" data-path="home" href="#">Home</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors uppercase" data-path="explore" href="#">Explore</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors uppercase" data-path="my-trips" href="#">My Trips</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors uppercase" data-path="plan-a-trip" href="#">Plan a Trip</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors uppercase" data-path="about" href="#">About</a></nav><div class="flex items-center gap-6"><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface uppercase transition-colors" href="#">Sign In</a><button class="px-6 py-3 bg-primary text-on-primary font-label-lg text-label-lg rounded-lg hover:bg-premium-navy transition-all uppercase">Plan My Trip</button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20"><div class="flex flex-col w-full bg-background min-h-screen">
+<section class="w-full pt-16 pb-8 px-margin-mobile md:px-margin-tablet lg:px-margin-desktop bg-surface-container-low relative overflow-hidden">
+<div class="absolute inset-0 w-full h-full pointer-events-none opacity-20">
+<div class="absolute top-[-10%] right-[-5%] w-[40%] h-[60%] rounded-full bg-primary-fixed-dim blur-3xl mix-blend-multiply"></div>
+</div>
+<div class="max-w-[1440px] mx-auto relative z-10 flex flex-col gap-content-v-gap">
+<div class="flex flex-col gap-4">
+<h1 class="font-display-xl text-display-xl text-primary tracking-tight">Curated Expeditions</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Discover bespoke experiences and refined destinations tailored for the discerning traveler.</p>
+</div>
+<div class="w-full bg-surface-container-lowest shadow-xl rounded-xl p-6 flex flex-col md:flex-row items-end gap-6 relative mt-8 z-20">
+<div class="flex-1 w-full grid grid-cols-1 md:grid-cols-4 gap-4">
+<div class="flex flex-col gap-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Destination</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full bg-sand-accent text-on-surface font-body-md text-body-md py-3 pl-10 pr-4 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-on-surface-variant/50" placeholder="Where to?" type="text"/>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Dates</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">calendar_month</span>
+<input class="w-full bg-sand-accent text-on-surface font-body-md text-body-md py-3 pl-10 pr-4 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-on-surface-variant/50" placeholder="Select dates" type="text"/>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Pace</label>
+<div class="relative group cursor-pointer">
+<div class="w-full bg-sand-accent text-on-surface font-body-md text-body-md py-3 px-4 rounded-lg flex items-center justify-between">
+<span>Leisurely</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">expand_more</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Guests</label>
+<div class="relative group cursor-pointer">
+<div class="w-full bg-sand-accent text-on-surface font-body-md text-body-md py-3 px-4 rounded-lg flex items-center justify-between">
+<span>2 Adults</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+<button class="w-full md:w-auto px-8 py-3 bg-primary text-on-primary font-label-lg text-label-lg rounded-lg hover:bg-premium-navy transition-all uppercase whitespace-nowrap h-[48px] flex items-center justify-center">
+            Search
+        </button>
+</div>
+<div class="flex flex-wrap items-center gap-3 mt-4">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase mr-2">Filters:</span>
+<button class="px-4 py-2 bg-secondary-container text-on-secondary-container font-label-sm text-label-sm rounded-full hover:bg-surface-dim transition-colors flex items-center gap-2">
+                Culture <span class="material-symbols-outlined text-[16px]">close</span>
+</button>
+<button class="px-4 py-2 bg-surface-container text-on-surface font-label-sm text-label-sm rounded-full hover:bg-surface-dim transition-colors">
+                Food &amp; Wine
+            </button>
+<button class="px-4 py-2 bg-surface-container text-on-surface font-label-sm text-label-sm rounded-full hover:bg-surface-dim transition-colors">
+                Nature
+            </button>
+<button class="px-4 py-2 bg-surface-container text-on-surface font-label-sm text-label-sm rounded-full hover:bg-surface-dim transition-colors">
+                Wellness
+            </button>
+<div class="h-4 w-[1px] bg-outline-variant/30 mx-2"></div>
+<button class="px-4 py-2 flex items-center gap-2 text-on-surface-variant hover:text-on-surface transition-colors font-label-sm text-label-sm uppercase">
+<span class="material-symbols-outlined text-[18px]">tune</span> More Filters
+            </button>
+</div>
+</div>
+</section>
+<section class="max-w-[1440px] mx-auto w-full px-margin-mobile md:px-margin-tablet lg:px-margin-desktop py-section-v-gap flex flex-col lg:flex-row gap-gutter relative">
+<div class="w-full lg:w-1/4 flex flex-col gap-8 hidden lg:flex sticky top-28 h-fit">
+<div class="flex flex-col gap-6 bg-surface-container-low p-6 rounded-xl shadow-sm">
+<h3 class="font-headline-md text-headline-md text-primary">Curate</h3>
+<div class="flex flex-col gap-4">
+<h4 class="font-label-lg text-label-lg text-on-surface uppercase tracking-wider">Experience Type</h4>
+<div class="flex flex-col gap-3">
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="w-5 h-5 rounded border border-outline flex items-center justify-center bg-primary text-on-primary">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">Architecture Tours</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="w-5 h-5 rounded border border-outline flex items-center justify-center group-hover:border-primary transition-colors">
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-primary transition-colors">Culinary Masterclasses</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="w-5 h-5 rounded border border-outline flex items-center justify-center group-hover:border-primary transition-colors">
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-primary transition-colors">Private Gallery Access</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="w-5 h-5 rounded border border-outline flex items-center justify-center group-hover:border-primary transition-colors">
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-primary transition-colors">Historical Walks</span>
+</label>
+</div>
+</div>
+<div class="w-full h-[1px] bg-outline-variant/20"></div>
+<div class="flex flex-col gap-4">
+<div class="flex justify-between items-center">
+<h4 class="font-label-lg text-label-lg text-on-surface uppercase tracking-wider">Investment</h4>
+<span class="font-label-sm text-label-sm text-on-surface-variant">$$$</span>
+</div>
+<div class="relative w-full h-12 pt-4">
+<div class="absolute w-full h-1 bg-surface-dim rounded-full top-6"></div>
+<div class="absolute w-2/3 h-1 bg-primary rounded-full top-6 left-1/4"></div>
+<div class="absolute w-4 h-4 bg-primary rounded-full top-[22px] left-1/4 shadow-sm cursor-grab"></div>
+<div class="absolute w-4 h-4 bg-primary rounded-full top-[22px] left-[91%] shadow-sm cursor-grab"></div>
+</div>
+<div class="flex justify-between items-center mt-[-8px]">
+<span class="font-label-sm text-label-sm text-on-surface-variant">$500</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">$5,000+</span>
+</div>
+</div>
+<div class="w-full h-[1px] bg-outline-variant/20"></div>
+<div class="w-full h-32 rounded-lg overflow-hidden relative">
+<div class="w-full h-full bg-cover bg-center" data-location="Europe" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAIJBgpvzU5qXZF_k8i3l0MMWJpxq_ZKWdSIQ1T3QchRlqflS7sQ83CWYtQI3TWdC56_Qv99UvqJbBCqRCNHTE8hWz9EYv4mLbEiyHPttKJh_T3MQnsPOvrWdfGjeHmJqs3K4hruuNF-YqW8Av73PdYDr2btlj9rXF0elX5flGtq8Wrgbpu93K8LjiQpRGKUC8MLWRHw16VyDy6w6i_7cQcUFlTidc5tr7eiipXZn9WLehmr8VQ0LY0')"></div>
+<div class="absolute inset-0 bg-primary/10 hover:bg-transparent transition-colors cursor-pointer flex items-center justify-center">
+<button class="bg-glass-white backdrop-blur-md px-4 py-2 rounded-full font-label-sm text-label-sm text-primary uppercase shadow-sm">Map View</button>
+</div>
+</div>
+</div>
+</div>
+<div class="w-full lg:w-3/4 flex flex-col gap-12">
+<div class="flex justify-between items-end pb-4 border-b border-outline-variant/20">
+<span class="font-body-lg text-body-lg text-on-surface">Showing <strong class="font-headline-md text-headline-md">24</strong> refined experiences</span>
+<div class="flex items-center gap-2 cursor-pointer group">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase group-hover:text-primary transition-colors">Sort by: Recommended</span>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover:text-primary transition-colors">sort</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="group flex flex-col gap-4 cursor-pointer">
+<div class="relative w-full aspect-[4/5] rounded-xl overflow-hidden shadow-md">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="A meticulously composed photograph of a serene Kyoto zen garden at dawn, soft mist hanging in the air, raked sand patterns perfectly undisturbed, surrounded by ancient moss-covered stones and delicate maple trees. The lighting is diffused and cool, conveying tranquility and exclusivity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQ8uRfm0kssjBJe3VwO3FrwnA-gSH4syRtgAQu2u7PesCow1A_EPVVwaHCS3hZJZ9HzjO7DatPUbGZQAtZ7T35ZLHFipanFDicv0PScHUL8tXhmg17yUaX5-cXIFMpqFAV0ZRTIetJgGOW2kO0Jc8IXbDrdsUQiBS2KvJhrrElywy7gRKtR7joFuDr9Fabl4CrBtCjSu9fErpdxaY48kCQle443MgP2wzYQzRVIr44ZvARmeelPNjY"/>
+<div class="absolute top-4 left-4 bg-glass-white backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-[14px] text-primary">location_on</span>
+<span class="font-label-sm text-label-sm text-primary uppercase">Kyoto, Japan</span>
+</div>
+<div class="absolute top-4 right-4 bg-surface-container-lowest/90 backdrop-blur-sm w-8 h-8 rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 0;">favorite</span>
+</div>
+</div>
+<div class="flex flex-col gap-2 px-1">
+<div class="flex justify-between items-start">
+<h3 class="font-headline-md text-headline-md text-primary leading-tight group-hover:text-surface-tint transition-colors">Zen Awakening: Private Temple Access</h3>
+<span class="font-label-lg text-label-lg text-on-surface bg-sand-accent px-2 py-1 rounded">$$</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Gain exclusive pre-dawn entry to one of Kyoto's most revered Rinzai Zen temples, guided by a senior monk.</p>
+<div class="flex flex-wrap gap-2 mt-2">
+<span class="font-label-sm text-label-sm text-on-secondary-fixed-variant bg-secondary-fixed px-3 py-1 rounded-full">Culture</span>
+<span class="font-label-sm text-label-sm text-on-secondary-fixed-variant bg-secondary-fixed px-3 py-1 rounded-full">Wellness</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1 ml-auto"><span class="material-symbols-outlined text-[14px]">schedule</span> 3 Hours</span>
+</div>
+</div>
+</div>
+<div class="group flex flex-col gap-4 cursor-pointer -mt-0 md:-mt-12">
+<div class="relative w-full aspect-[4/5] rounded-xl overflow-hidden shadow-md">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="A dramatic high-contrast shot of modern architectural interior in Copenhagen, warm sunlight streaming through large geometric windows casting striking shadows on minimalist concrete and light oak floors. A single design chair sits in the focal point. Sophisticated, clean, editorial style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtgZ6anfZ58_1CAfYm_YsoFlnnV_OpBrphtFDhG9jwZaRLOlCpVKeycSm3w1aFV6fYu8JY2q5NMV0usR7CUQlgl85QOS1mzVusIJHmKR8pRqVPc-xHpGLLe8mLtIBuI65PnLy1sctXqdzw1sagWGLA_zjLQ4M48hlD_qI0qQk9OVxcm5RG32F_5ddG61j-WbCguOcRF-aGL9GEUtw_lfAibkm-pIdzkJavgdrpi39LWDOp49RzS2lE"/>
+<div class="absolute top-4 left-4 bg-glass-white backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-[14px] text-primary">location_on</span>
+<span class="font-label-sm text-label-sm text-primary uppercase">Copenhagen, Denmark</span>
+</div>
+</div>
+<div class="flex flex-col gap-2 px-1">
+<div class="flex justify-between items-start">
+<h3 class="font-headline-md text-headline-md text-primary leading-tight group-hover:text-surface-tint transition-colors">New Nordic Architecture Tour</h3>
+<span class="font-label-lg text-label-lg text-on-surface bg-sand-accent px-2 py-1 rounded">$$</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Explore the bleeding edge of sustainable Scandinavian design with a local architect as your personal guide.</p>
+<div class="flex flex-wrap gap-2 mt-2">
+<span class="font-label-sm text-label-sm text-on-secondary-fixed-variant bg-secondary-fixed px-3 py-1 rounded-full">Design</span>
+<span class="font-label-sm text-label-sm text-on-secondary-fixed-variant bg-secondary-fixed px-3 py-1 rounded-full">Urban</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1 ml-auto"><span class="material-symbols-outlined text-[14px]">schedule</span> Half Day</span>
+</div>
+</div>
+</div>
+<div class="group flex flex-col gap-4 cursor-pointer">
+<div class="relative w-full aspect-video rounded-xl overflow-hidden shadow-md">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="A warm, intimate photograph of a rustic Italian kitchen in Tuscany, golden hour light illuminating fresh pasta being rolled on a wooden table, dustings of flour catching the light, rich terracotta tones and dark olive greens. Authentic, sensory, luxurious yet grounded." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHM5wAmxBHccvB-8HS_0PSyF0CkCE4u_xVTZUqneLbhb-PCqgXjP_8YRPIgIJkow4hANYxm-SB-lK0ER9njzDQ0bJDXPmIf_01SKmwXPGI0k18ODIYrf5EJTByBT3m-4R25T1wR7ApVRnBaPE4fjufwS2x2JN2deONgNHhWjBgmo0N6qVMs-QUsOC-l0TApIIAvprjR2cSOtJi1MkklFWmDDFMjaTWYvM4e7nnahNKAxtzqc10bmKt"/>
+<div class="absolute bottom-4 left-4 right-4 bg-glass-white backdrop-blur-md p-4 rounded-lg flex justify-between items-center shadow-lg border border-white/20">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary">location_on</span>
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-wider">Tuscany, Italy</span>
+</div>
+<div class="flex -space-x-2">
+<div class="w-6 h-6 rounded-full bg-surface-dim border border-surface-container-lowest"></div>
+<div class="w-6 h-6 rounded-full bg-surface-variant border border-surface-container-lowest"></div>
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center border border-surface-container-lowest"><span class="text-[8px] text-on-primary">+3</span></div>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-2 px-1">
+<div class="flex justify-between items-start">
+<h3 class="font-headline-md text-headline-md text-primary leading-tight group-hover:text-surface-tint transition-colors">Truffle Foraging &amp; Estate Dining</h3>
+<span class="font-label-lg text-label-lg text-on-surface bg-sand-accent px-2 py-1 rounded">$$$</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Join a generational tartufaio and his Lagotto Romagnolo dogs in the misty hills, followed by a private feast.</p>
+</div>
+</div>
+<div class="flex items-center justify-center p-8 bg-surface-container rounded-xl">
+<div class="flex flex-col items-center text-center gap-4">
+<div class="w-16 h-16 rounded-full bg-primary-fixed flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-on-primary-fixed text-[32px]">edit_calendar</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary">Don't see exactly what you desire?</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-sm">Our concierge can craft a completely bespoke itinerary based on these refined parameters.</p>
+<button class="mt-4 px-6 py-2 border border-primary text-primary hover:bg-primary hover:text-on-primary transition-colors rounded font-label-lg text-label-lg uppercase">Request Custom Itinerary</button>
+</div>
+</div>
+</div>
+<div class="flex justify-center mt-8">
+<button class="px-8 py-3 bg-surface-container text-on-surface font-label-lg text-label-lg rounded-lg hover:bg-surface-variant transition-colors uppercase shadow-sm">Load More Experiences</button>
+</div>
+</div>
+</section>
+</div></main><footer class="w-full bg-surface-container-low pt-section-v-gap pb-12 border-t border-outline-variant/10"><div class="max-w-[1440px] mx-auto px-margin-mobile md:px-margin-tablet lg:px-margin-desktop"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter mb-section-v-gap"><div class="flex flex-col gap-content-v-gap"><span class="font-headline-md text-headline-md text-primary">GlobeTrotter</span><p class="font-body-md text-body-md text-on-surface-variant max-w-xs">The art of travel refined for the intellectually curious.</p></div><div class="flex flex-col gap-6"><span class="font-label-lg text-label-lg text-primary uppercase">Explore</span><nav class="flex flex-col gap-4"><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface" href="#">Destinations</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface" href="#">Experiences</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface" href="#">Journals</a></nav></div><div class="flex flex-col gap-6"><span class="font-label-lg text-label-lg text-primary uppercase">Plan</span><nav class="flex flex-col gap-4"><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface" href="#">Itineraries</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface" href="#">Concierge</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface" href="#">Travel Guides</a></nav></div><div class="flex flex-col gap-6"><span class="font-label-lg text-label-lg text-primary uppercase">Company</span><nav class="flex flex-col gap-4"><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface" href="#">Our Story</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface" href="#">Contact</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface" href="#">Press</a></nav></div></div><div class="pt-8 border-t border-outline-variant flex flex-col md:flex-row justify-between items-center gap-6"><span class="font-label-sm text-label-sm text-on-secondary-fixed-variant">© 2024 GlobeTrotter. All rights reserved.</span><div class="flex gap-8"><a class="font-label-sm text-label-sm text-on-secondary-fixed-variant hover:text-on-surface uppercase" href="#">Privacy</a><a class="font-label-sm text-label-sm text-on-secondary-fixed-variant hover:text-on-surface uppercase" href="#">Terms</a></div></div></div></footer></body></html>
