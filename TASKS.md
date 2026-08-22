@@ -13,8 +13,23 @@ parallel:
 | Phase | What | Status |
 |---|---|---|
 | **A** | Finish the **entire backend**, all waves | **DONE** — Waves 0, 1, 3 (B1–B13 complete; B14 blocked on server key). 137 tests passing, PostgreSQL verified |
-| **B** | Generate the **entire UI in Stitch**, then port it into React | Not started |
-| **C** | **Join** the two | Not started |
+| **B** | Generate the **entire UI in Stitch**, then port it into React | **In progress** — Login, Dashboard, Create Trip, My Trips, Profile, Itinerary Builder all wired to real backend data (see §B-1/B-2 below) |
+| **C** | **Join** the two | Underway alongside B — every ported screen below is already integration-tested live against the real API, not deferred to a separate phase |
+
+### Screens wired to real backend data (not mock) — current as of this pass
+
+| Screen | Route | Real data | Notes |
+|---|---|---|---|
+| Login/Signup | `/login` | `POST /auth/login`, `/auth/signup` | |
+| Dashboard | `/` | `GET /trips`, `GET /cities`, `POST /trips` | |
+| Create Trip | `/trips/new` | `GET /cities`, `GET /activities`, `POST /trips`+`/stops`+`/activities` | Creates trip → stop → activities → navigates to the real Itinerary Builder |
+| My Trips | `/trips` | `GET /trips` | Ongoing/upcoming/archived computed client-side (lib/tripStatus.ts) — not a backend field |
+| Profile | `/profile` | `GET/PATCH /users/me`, `GET /trips` + per-trip detail | Stats (destinations/countries) computed from real stop cities. Loyalty tier card has no backend model — marked inert, not faked |
+| Itinerary Builder | `/trips/:id` | `GET /trips/{id}`, stops/activities CRUD, `PATCH /trips/{id}` (share) | Timeline, day schedule, activity library, add-stop form, delete, Route Feasibility panel (real §7.2 fields) — all live |
+
+Search/Sort/Filter controls with no backend counterpart render **visibly
+inert** (components/Inert.tsx) rather than pretending to work — same rule
+throughout, see INTEGRATION.md §3.
 
 **Why this is written down rather than assumed:** the original plan built
 frontend and backend in parallel and integrated continuously, which made a
