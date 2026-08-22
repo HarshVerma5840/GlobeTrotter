@@ -1,10 +1,24 @@
 # GlobeTrotter
 
 Odoo-hackathon travel planner. Backend: FastAPI + SQLAlchemy + PostgreSQL.
-Frontend: React + TypeScript. Full design in `ARCHITECTURE.md`, the binding
-schema/route/env contract in `CONTRACTS.md`, task ownership in `TASKS.md`,
-and ready-to-use kickoff prompts per track in `PROMPTS.md`. Read those
-before writing code — this README is just the startup sequence.
+Frontend: React + TypeScript, with screens generated in **Stitch**.
+
+| Doc | What it's for |
+|---|---|
+| `ARCHITECTURE.md` | System design and rationale |
+| `CONTRACTS.md` | **Binding** schema / route / env contract |
+| `INTEGRATION.md` | Build order + how backend and UI join without conflicts |
+| `TASKS.md` | Phase plan and current status |
+| `PROMPTS.md` | Ready-to-use kickoff prompts per phase |
+
+Read those before writing code — this README is just the commands.
+
+## Build order
+
+Three sequential phases: **A** entire backend → **B** entire UI in Stitch,
+ported to React → **C** integration. Phase A Waves 0–1 are done.
+**Anyone about to write UI must read `INTEGRATION.md` first** — it is what
+keeps Phase C mechanical instead of a scramble.
 
 ## First-time setup
 
@@ -24,6 +38,21 @@ curl http://localhost:8000/health   # expect {"status":"ok"}
 
 Frontend: http://localhost:5173
 Backend docs (live OpenAPI contract): http://localhost:8000/docs
+
+## After ANY backend route or schema change
+
+Both steps, in this order — this is the whole anti-drift mechanism
+(`INTEGRATION.md` §1):
+
+```bash
+cd backend && python export_openapi.py && cd ../frontend && npm run gen:types && npm run typecheck
+```
+
+## Backend tests
+
+```bash
+cd backend && python -m pytest
+```
 
 ## Notes
 

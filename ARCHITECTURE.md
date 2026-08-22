@@ -123,18 +123,42 @@ globetrotter/
         BudgetChart.tsx            # Recharts
         CalendarView.tsx             # react-big-calendar wrapper
       api/
-        client.ts                     # typed fetch wrapper, attaches JWT
+        client.ts                     # THE one fetch boundary: JWT, base URL, error shape
+        endpoints.ts                   # one function per backend route
         hooks/                          # React Query hooks per resource
-      types/                             # TS interfaces mirroring backend Pydantic schemas
+      types/
+        api.d.ts                        # AUTO-GENERATED from contract/openapi.json — never edit
+        models.ts                        # friendly aliases (Trip, Stop, Budget, ...)
     package.json
     vite.config.ts
     Dockerfile
+  contract/
+    openapi.json                        # frozen, committed snapshot of the live API
   docker-compose.yml
   .env.example
   ARCHITECTURE.md
   CONTRACTS.md
+  INTEGRATION.md                        # build order + the anti-drift contract pipeline
   TASKS.md
 ```
+
+### 3.1 The contract pipeline (build-order dependent)
+
+The team builds in three sequential phases — entire backend, then the
+entire UI in **Stitch**, then integration — rather than running frontend
+and backend in parallel. That defers every shape mismatch to the last
+phase, so the contract is frozen and machine-checked instead of agreed on
+paper:
+
+```
+backend/app/**  →  contract/openapi.json  →  frontend/src/types/api.d.ts
+                   (python export_openapi.py)   (npm run gen:types)
+```
+
+A field the backend doesn't return cannot exist in the frontend's types, so
+a screen reading it fails `npm run typecheck` rather than at the demo.
+**`INTEGRATION.md` is the full rulebook and is mandatory reading before any
+UI work.**
 
 ## 4. Data Model (see CONTRACTS.md §2 for exact field list)
 

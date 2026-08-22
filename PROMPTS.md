@@ -1,14 +1,87 @@
 # GlobeTrotter — Kickoff Prompts
 
-Copy-paste prompts for each person/team to hand to their own AI coding
-session (Claude Code or equivalent) once they've cloned the repo. Every
-prompt assumes `ARCHITECTURE.md`, `CONTRACTS.md`, and `TASKS.md` already
-exist at the repo root — the setup prompt below puts them there and
-scaffolds the skeleton everyone else builds inside.
+> ## ⚠️ Build order changed — read this first
+>
+> The prompts in sections 0–4 below were written for the **original
+> parallel-track plan** (Backend, Frontend, Integration, QA all running at
+> once). The team now builds in **three sequential phases**:
+>
+> **A** entire backend → **B** entire UI in Stitch, ported to React → **C** integration.
+>
+> **Current state:** the Setup prompt (§0) and most of the Backend prompt
+> (§1) are already done — Phase A Waves 0–1 have landed. The **Frontend
+> Track Prompt (§2) is superseded** by the Phase B prompt below; do not run
+> it as written, because it assumes hand-built screens and a frontend
+> running concurrently with backend changes.
+>
+> Use **§5 (Phase A finish)** and **§6 (Phase B)** below. Sections 0–4 are
+> kept for reference and for the Integration/QA prompts, which still apply.
 
-Run the **Setup prompt** once, as the very first thing, before any track
-prompt. Then hand each track prompt to a separate session — they run in
-parallel from that point on.
+---
+
+## 5. Phase A — Finish the backend
+
+```
+Read CLAUDE.md, ARCHITECTURE.md, CONTRACTS.md, INTEGRATION.md, and
+TASKS.md. Phase A Waves 0-1 are already done and green (114 tests).
+
+Your job is to finish Phase A: TASKS.md Wave 3 (B12 collaborators/votes/
+comments, B13 admin analytics, B14 Places-backed city search), plus the
+Phase A exit gate in TASKS.md.
+
+Rules:
+- CONTRACTS.md is binding. Update it FIRST if a route/field must change.
+- B12 widens trip access to collaborators — change it ONLY in
+  api/deps.py's assert_trip_access, never inline in a route
+  (CONTRACTS §8). assert_trip_owner must stay owner-only so collaborators
+  never gain the sharing controls.
+- Every new route needs tests in the existing pytest style.
+- When done, run BOTH:
+    cd backend && python export_openapi.py
+    cd ../frontend && npm run gen:types && npm run typecheck
+  and commit the regenerated contract/openapi.json and api.d.ts. This is
+  non-negotiable — it is what stops Phase C from breaking (INTEGRATION.md §1).
+
+Do not start any UI work. Stop and report what landed.
+```
+
+---
+
+## 6. Phase B — Stitch UI, then port to React
+
+```
+Read INTEGRATION.md end to end before writing any code — especially §3
+(known conflict traps), §5 (screen → route → data map), and §6 (what
+survives the port from Stitch).
+
+The backend is finished and its contract is frozen in contract/openapi.json.
+The typed client already exists: frontend/src/api/client.ts,
+frontend/src/api/endpoints.ts, frontend/src/types/models.ts.
+
+Your job is to port Stitch-generated screens into React.
+
+Hard rules:
+- Nothing outside client.ts calls fetch(). Delete any fetch/AJAX code that
+  came out of Stitch.
+- No URL path string outside endpoints.ts.
+- No screen declares its own API shape — import from types/models.ts.
+- Backend field names win over Stitch's. Never rename server-side.
+- Money is a JSON STRING ("70.00"), not a number — use formatMoney().
+- Dates are "YYYY-MM-DD" strings; don't new Date() them casually.
+- 401 means log in; 403 means not yours. Never conflate them.
+- Every screen handles loading, empty, AND error states — Stitch mocks
+  show none of them.
+
+Port ONE screen first, completely, and stop for review before doing the
+rest. A systemic porting problem is cheap to fix on screen 1 and expensive
+on screen 15.
+
+Run `npm run typecheck` after each screen. It must stay clean.
+```
+
+---
+
+## Reference: original parallel-track prompts (superseded)
 
 ---
 

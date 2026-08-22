@@ -4,7 +4,12 @@
     "skipLibCheck": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    // `composite: true` forces declaration emit and cannot disable it, so
+    // without an outDir tsc -b drops vite.config.js/.d.ts next to the
+    // source on every build. Nothing consumes them; send them to a temp
+    // dir so they never land in the repo.
+    "outDir": "./node_modules/.tmp/tsconfig.node"
   },
   "include": ["vite.config.ts"]
 }
