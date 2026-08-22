@@ -191,6 +191,71 @@ CATALOG: list[dict] = [
             ("Sky Lagoon geothermal spa", "other", "65.00", 3.0),
         ],
     },
+    {
+        "name": "Manaus", "country": "Brazil",
+        "latitude": -3.1190, "longitude": -60.0217,
+        "cost_index": 45.0, "popularity": 65,
+        "activities": [
+            ("Amazon Theatre", "sightseeing", "15.00", 2.0),
+            ("Adolpho Lisboa Market tasting", "food", "20.00", 2.0),
+            ("Jungle lodge river trek", "adventure", "90.00", 8.0),
+            ("River boat day pass", "transport", "10.00", 1.0),
+            ("Eco-lodge stay", "stay", "120.00", 24.0),
+            ("Meeting of Waters tour", "other", "35.00", 4.0),
+        ],
+    },
+    {
+        "name": "Cape Town", "country": "South Africa",
+        "latitude": -33.9249, "longitude": 18.4241,
+        "cost_index": 60.0, "popularity": 82,
+        "activities": [
+            ("Robben Island Museum", "sightseeing", "40.00", 4.0),
+            ("Bo-Kaap Cape Malay cooking", "food", "45.00", 3.0),
+            ("Table Mountain hike", "adventure", "0.00", 4.0),
+            ("MyCiTi bus pass", "transport", "8.00", 1.0),
+            ("Camps Bay boutique hotel", "stay", "150.00", 24.0),
+            ("Kirstenbosch canopy walk", "other", "15.00", 2.0),
+        ],
+    },
+    {
+        "name": "Sydney", "country": "Australia",
+        "latitude": -33.8688, "longitude": 151.2093,
+        "cost_index": 95.0, "popularity": 88,
+        "activities": [
+            ("Sydney Opera House tour", "sightseeing", "32.00", 2.0),
+            ("Sydney Fish Market lunch", "food", "40.00", 2.0),
+            ("Bondi to Coogee coastal walk", "adventure", "0.00", 3.0),
+            ("Opal daily cap", "transport", "11.00", 1.0),
+            ("Darling Harbour hotel", "stay", "200.00", 24.0),
+            ("Harbour Bridge climb", "other", "220.00", 3.5),
+        ],
+    },
+    {
+        "name": "Rio de Janeiro", "country": "Brazil",
+        "latitude": -22.9068, "longitude": -43.1729,
+        "cost_index": 55.0, "popularity": 85,
+        "activities": [
+            ("Christ the Redeemer", "sightseeing", "25.00", 3.0),
+            ("Churrascaria experience", "food", "50.00", 2.5),
+            ("Sugarloaf Mountain cable car", "adventure", "30.00", 3.0),
+            ("MetroRio card", "transport", "5.00", 1.0),
+            ("Copacabana beachfront hotel", "stay", "140.00", 24.0),
+            ("Samba club in Lapa", "other", "20.00", 4.0),
+        ],
+    },
+    {
+        "name": "Dubai", "country": "United Arab Emirates",
+        "latitude": 25.2048, "longitude": 55.2708,
+        "cost_index": 90.0, "popularity": 87,
+        "activities": [
+            ("Burj Khalifa observation deck", "sightseeing", "45.00", 2.0),
+            ("Al Fahidi street food tour", "food", "40.00", 3.0),
+            ("Desert safari and dune bashing", "adventure", "85.00", 6.0),
+            ("Nol card day pass", "transport", "6.00", 1.0),
+            ("Marina luxury apartment", "stay", "250.00", 24.0),
+            ("Dubai Fountain show", "other", "0.00", 1.0),
+        ],
+    }
 ]
 
 
