@@ -28,7 +28,7 @@ cp .env.example .env
 # VITE_GOOGLE_MAPS_API_KEY, GROQ_API_KEY in .env (never commit that file)
 ```
 
-## Start everything
+## Start everything (Docker)
 
 ```bash
 docker compose up -d
@@ -38,6 +38,37 @@ curl http://localhost:8000/health   # expect {"status":"ok"}
 
 Frontend: http://localhost:5173
 Backend docs (live OpenAPI contract): http://localhost:8000/docs
+
+## Start everything (local, no Docker — what this repo has been run with)
+
+Needs a local PostgreSQL already running and `.env` filled in at the repo
+root (`DATABASE_URL` pointing at it).
+
+```bash
+# Terminal 1 — backend
+cd backend
+pip install -e .          # first time only
+alembic upgrade head       # applies the schema — safe to re-run
+python -m app.seed         # idempotent catalog seed (cities/activities)
+python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+
+# Terminal 2 — frontend
+cd frontend
+npm install                # first time only
+npm run dev
+```
+
+Frontend: http://localhost:5173 · Backend: http://localhost:8000/health
+should return `{"status":"ok"}`.
+
+No seeded login exists — create an account from `/login` ("New here?
+Create an account"), or via the API directly:
+
+```bash
+curl -X POST http://localhost:8000/auth/signup \
+  -H "Content-Type: application/json" \
+  -d '{"email":"you@example.com","password":"YourPassword1","name":"Your Name"}'
+```
 
 ## After ANY backend route or schema change
 

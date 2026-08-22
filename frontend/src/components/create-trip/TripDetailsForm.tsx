@@ -14,7 +14,6 @@ export default function TripDetailsForm({
   return (
     <section className="flex flex-col gap-6">
       <div className="grid grid-cols-1 gap-8">
-        {/* Trip Name */}
         <div className="flex flex-col gap-4 border-b border-editorial-border pb-4">
           <label
             htmlFor="trip-name"
@@ -30,10 +29,11 @@ export default function TripDetailsForm({
             type="text"
             value={tripName}
             onChange={(e) => onTripNameChange(e.target.value)}
+            maxLength={255}
+            required
           />
         </div>
 
-        {/* Description */}
         <div className="flex flex-col gap-4 border-b border-editorial-border pb-4">
           <label
             htmlFor="trip-description"

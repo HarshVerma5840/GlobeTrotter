@@ -1,0 +1,439 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+* {
+  padding: 0;
+  margin: 0;
+  border: none;
+  outline: none;
+  font-family: "Inter", sans-serif;
+}
+
+body {
+  overflow-x: hidden;
+  background-color: #f6f5f3;
+}
+
+.hero-section {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background-image: url(img/bac\ 4.png);
+  background-size: cover;
+  background-position: top;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+/* Background-images */
+
+.content img {
+  position: absolute;
+  bottom: -12%;
+}
+
+
+
+.title {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.front-text-wrapper {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  animation: smoothFade 1s ease-in 1.3s forwards;
+}
+
+@keyframes smoothFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.title h3 {
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 15px;
+  color: white;
+  text-align: center;
+}
+
+.title h1 {
+  font-size: 15rem;
+  font-weight: 800;
+  letter-spacing: 50px;
+  text-transform: uppercase;
+  color: white;
+  text-align: center;
+  margin-top: -20px;
+  margin-bottom: -20px;
+  margin-left: 50px; /* Shift it slightly to visually perfectly center the massive letters */
+}
+
+p {
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.7);
+  width: 70%;
+  text-align: center;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+.info-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  bottom: 18%;
+  z-index: 1;
+}
+
+.cta {
+  position: absolute;
+  bottom: 8%;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  z-index: 1;
+}
+
+.cta button {
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 50px;
+  height: 50px;
+  width: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.cta button:hover {
+  background-color: rgba(255, 255, 255, 0.8);
+  color:rgb(53, 53, 53);
+}
+
+.slider {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.slider i {
+  padding: 0 5%;
+  font-size: 36px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Animations */
+@keyframes bottomIn {
+  from {
+    transform: translateY(200px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.back-1 {
+  animation: bottomIn 1s ease-out forwards;
+}
+
+.back-2 {
+  animation: bottomIn 1.3s ease-out forwards;
+}
+
+.back-3 {
+  animation: bottomIn 1.5s ease-out forwards;
+}
+
+@keyframes bottomInText {
+  from {
+    transform: translateY(500px);
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+h3 {
+  animation: bottomInText 1s ease-out forwards;
+}
+
+h1 {
+  animation: bottomInText 1.2s ease-out forwards;
+}
+
+p {
+  animation: bottomInText 1.2s ease-out forwards;
+  animation-delay: 0.2s;
+  opacity: 0;
+}
+
+button {
+  animation: bottomInText 1.2s ease-out forwards;
+  animation-delay: 0.3s;
+  opacity: 0;
+}
+
+@keyframes backgroundImage {
+  from {
+    background-position: top;
+  }
+  to {
+    background-position: 50% 14%;
+  }
+}
+
+body {
+  animation: backgroundImage 1.6s ease-out forwards;
+}
+
+@keyframes topIn {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+nav {
+  animation: topIn 1.2s ease-out forwards;
+}
+
+@keyframes zoomOut{
+  from {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.slider {
+  animation: zoomOut 1.2s ease-out forwards;
+}
+
+/* -----------------------------
+   NEW NAVBAR & FOOTER STYLES 
+   ----------------------------- */
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 20px 3%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+  box-sizing: border-box;
+  background-color: rgba(200, 235, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.nav-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  font-weight: 500;
+  color: #111;
+}
+
+.nav-links {
+  display: flex;
+  gap: 30px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  font-family: 'Inter', sans-serif;
+  color: #000;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: color 0.3s;
+  white-space: nowrap;
+}
+
+.nav-links a:hover {
+  color: #555;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.sign-in, .sign-up {
+  text-decoration: none;
+  font-family: 'Inter', sans-serif;
+  color: #000;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: color 0.3s;
+  white-space: nowrap;
+}
+
+.sign-in:hover, .sign-up:hover {
+  color: #555;
+}
+
+.plan-trip-btn {
+  background-color: #000;
+  color: #fff;
+  padding: 14px 28px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  animation: none !important;
+  opacity: 1 !important;
+  transition: background-color 0.3s;
+  white-space: nowrap;
+}
+
+.plan-trip-btn:hover {
+  background-color: #333;
+}
+
+.user-profile {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: 1.5px solid rgba(0, 0, 0, 0.15);
+  color: #333;
+  background-color: transparent;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.user-profile:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.3);
+}
+
+.site-footer {
+  background-color: #cdecd5; /* More noticeable light greenish */
+  padding: 80px 10%;
+  color: #333;
+  font-family: 'Inter', sans-serif;
+  z-index: 10;
+  position: relative;
+}
+
+.footer-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 60px;
+}
+
+.footer-brand {
+  max-width: 300px;
+}
+
+.footer-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #111;
+}
+
+.site-footer p {
+  color: #666;
+  font-size: 15px;
+  line-height: 1.6;
+  text-align: left;
+  width: auto;
+  text-shadow: none;
+  animation: none !important;
+  opacity: 1 !important;
+}
+
+.footer-links {
+  display: flex;
+  gap: 80px;
+}
+
+.footer-column h4 {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 25px;
+  color: #111;
+  text-transform: uppercase;
+}
+
+.footer-column a {
+  display: block;
+  text-decoration: none;
+  color: #666;
+  font-size: 15px;
+  margin-bottom: 15px;
+  transition: color 0.3s;
+}
+
+.footer-column a:hover {
+  color: #111;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 30px;
+  align-items: center;
+}
+
+.footer-bottom p {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.footer-legal {
+  display: flex;
+  gap: 30px;
+}
+
+.footer-legal a {
+  text-decoration: none;
+  color: #333;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}

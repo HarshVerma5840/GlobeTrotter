@@ -1,0 +1,152 @@
+import React from 'react';
+
+const App = () => {
+    return (
+        <div className="flex h-screen w-full bg-gray-100">
+            {/* Left Sidebar */}
+            <aside className="w-20 lg:w-64 bg-white/90 backdrop-blur-2xl border-r border-gray-200 shadow-2xl z-30 flex flex-col justify-between py-8 transition-all duration-300">
+                <div>
+                    <div className="px-6 mb-12 flex items-center justify-center lg:justify-start gap-3">
+                        <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center shadow-lg">
+                            <span className="text-white font-serif font-bold text-xl">W</span>
+                        </div>
+                        <span className="hidden lg:block text-2xl font-black tracking-widest uppercase text-gray-900">Wander</span>
+                    </div>
+
+                    <nav className="flex flex-col gap-2 px-4">
+                        {[
+                            { icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', label: 'Dashboard', active: true },
+                            { icon: 'M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9', label: 'Explore', active: false },
+                            { icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z', label: 'Itineraries', active: false },
+                            { icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z', label: 'Profile', active: false },
+                        ].map((item, idx) => (
+                            <a key={idx} href="#" className={`flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 ${item.active ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'}`}>
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={item.icon} /></svg>
+                                <span className="hidden lg:block font-semibold tracking-wide">{item.label}</span>
+                            </a>
+                        ))}
+                    </nav>
+                </div>
+                
+                <div className="px-8 hidden lg:block">
+                    <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100 shadow-inner text-center">
+                        <h4 className="font-bold text-gray-900 mb-2">Need Help?</h4>
+                        <p className="text-xs text-gray-500 mb-4">Contact our support team</p>
+                        <button className="w-full py-2 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50 transition-colors">Contact Us</button>
+                    </div>
+                </div>
+            </aside>
+
+            {/* Main Content Area */}
+            <main className="flex-1 relative overflow-hidden flex flex-col">
+                <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="absolute top-0 left-0 w-full h-full object-cover z-0"
+                >
+                    <source 
+                        src="https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-a-mountain-range-in-the-clouds-4390-large.mp4" 
+                        type="video/mp4" 
+                    />
+                    Your browser does not support the video tag.
+                </video>
+
+                <div className="absolute top-0 left-0 w-full h-full bg-white/40 z-10 backdrop-blur-[4px]"></div>
+
+                <header className="relative z-20 w-full p-8 flex justify-between items-center">
+                    <div className="relative w-96 hidden md:block">
+                        <input type="text" placeholder="Search destinations, tours, etc..." className="w-full bg-white/60 backdrop-blur-md border border-white/80 rounded-full py-3 px-6 pl-12 text-gray-900 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900 shadow-sm" />
+                        <svg className="w-5 h-5 absolute left-4 top-3.5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    </div>
+                    
+                    <div className="flex items-center gap-6 ml-auto">
+                        <button className="relative p-2 bg-white/60 backdrop-blur-md rounded-full shadow-sm hover:bg-white transition-colors border border-white/80">
+                            <svg className="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                            <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+                        </button>
+                        <div className="flex items-center gap-3 cursor-pointer bg-white/60 backdrop-blur-md py-2 px-4 rounded-full border border-white/80 shadow-sm hover:bg-white transition-colors">
+                            <img src="https://i.pravatar.cc/100?img=32" alt="User" className="w-8 h-8 rounded-full border border-gray-200" />
+                            <span className="font-semibold text-gray-900 text-sm hidden sm:block">Jane Doe</span>
+                            <svg className="w-4 h-4 text-gray-700 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+                        </div>
+                    </div>
+                </header>
+
+                <div className="relative z-20 flex-1 overflow-y-auto px-8 pb-12">
+                    <div className="mt-4 mb-16">
+                        <h2 className="text-sm font-bold tracking-[0.2em] text-gray-800 uppercase mb-2 flex items-center">
+                            <span className="w-8 h-[2px] bg-gray-800 mr-4"></span>
+                            Featured Destination
+                        </h2>
+                        <h1 className="text-6xl md:text-8xl lg:text-9xl font-serif font-black text-gray-900 tracking-tighter mb-4 leading-none drop-shadow-sm">
+                            VIETNAM
+                        </h1>
+                        <p className="text-lg md:text-xl text-gray-800 max-w-xl font-medium tracking-wide mb-8 bg-white/50 p-4 rounded-2xl backdrop-blur-md shadow-sm border border-white/70">
+                            Explore the breathtaking mountain clouds. A paradise for nature lovers and adventurers alike.
+                        </p>
+                        <button className="px-8 py-4 bg-gray-900 text-white font-bold uppercase tracking-wider rounded-2xl hover:bg-black transition-all duration-300 shadow-xl flex items-center group">
+                            Book This Trip
+                            <svg className="w-5 h-5 ml-3 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="bg-white/70 backdrop-blur-xl border border-white/90 p-6 rounded-3xl shadow-xl hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
+                            <div className="flex justify-between items-center mb-6">
+                                <h3 className="text-lg font-bold text-gray-900">Popular Tours</h3>
+                                <span className="text-xs font-bold text-gray-900 bg-gray-200 px-3 py-1 rounded-full">See All</span>
+                            </div>
+                            <div className="flex gap-4 items-center">
+                                <div className="w-20 h-20 rounded-2xl bg-gray-300 overflow-hidden shrink-0 shadow-inner">
+                                    <img src="https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Ha Long" className="w-full h-full object-cover" />
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-gray-900 leading-tight mb-1">Ha Long Bay Cruise</h4>
+                                    <p className="text-sm text-gray-600 mb-2">3 Days • 2 Nights</p>
+                                    <p className="font-black text-gray-900">$299</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-white/70 backdrop-blur-xl border border-white/90 p-6 rounded-3xl shadow-xl hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
+                            <div className="flex justify-between items-center mb-6">
+                                <h3 className="text-lg font-bold text-gray-900">Your Next Trip</h3>
+                                <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                            </div>
+                            <div className="flex flex-col gap-3">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 bg-gray-900 text-white rounded-xl flex flex-col items-center justify-center font-bold shadow-md">
+                                        <span className="text-xs opacity-80">OCT</span>
+                                        <span className="text-lg leading-none">14</span>
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-900">Flight to Hanoi</h4>
+                                        <p className="text-sm text-gray-600">Vietnam Airlines • 10:30 AM</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-gray-900/90 backdrop-blur-xl border border-gray-800 p-6 rounded-3xl shadow-xl text-white hover:-translate-y-1 transition-transform duration-300 cursor-pointer">
+                            <h3 className="text-lg font-bold text-white mb-6">Travel Stats</h3>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p className="text-gray-400 text-sm font-medium mb-1">Countries</p>
+                                    <p className="text-3xl font-black">12</p>
+                                </div>
+                                <div>
+                                    <p className="text-gray-400 text-sm font-medium mb-1">Miles</p>
+                                    <p className="text-3xl font-black">45K</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    );
+};
+
+export default App;
