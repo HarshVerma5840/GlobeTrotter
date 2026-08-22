@@ -20,6 +20,7 @@ import MembershipCard from "../components/profile/MembershipCard";
 import ProfileHero from "../components/profile/ProfileHero";
 import TravelStats from "../components/profile/TravelStats";
 import TripGrid, { type ProfileTripCard } from "../components/profile/TripGrid";
+import { getTripCoverImage } from "../lib/cityImages";
 import { formatDateRange, tripStatus } from "../lib/tripStatus";
 import type { Trip, TripDetail } from "../types/models";
 
@@ -92,7 +93,7 @@ export default function Profile() {
     id: trip.id,
     title: trip.name,
     subtitle: cityLabel(trip.id) ?? trip.description ?? "No stops added yet",
-    imageUrl: trip.cover_image_url ?? null,
+    imageUrl: getTripCoverImage(trip),
     dateBadge: formatDateRange(trip),
   }));
 
@@ -100,7 +101,7 @@ export default function Profile() {
     id: trip.id,
     title: trip.name,
     subtitle: `Completed ${formatDateRange(trip)}`,
-    imageUrl: trip.cover_image_url ?? null,
+    imageUrl: getTripCoverImage(trip),
     locationTag: firstCountry(trip.id),
   }));
 

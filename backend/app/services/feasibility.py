@@ -5,33 +5,40 @@ This is THE single implementation. CONTRACTS §8 is explicit: the frontend
 never recomputes any of this, it only displays what the API returns, and if
 a threshold needs tuning it changes here and nowhere else.
 
-Scope of this pass (deliberate, stated plainly rather than left implied):
-CONTRACTS §7.2 specifies Google Directions as the PRIMARY source with
-Haversine as the fallback for pairs Directions can't route. This module
-currently implements the Haversine path only. That is a scope decision for
-demo-critical time, not an oversight, and it is safe because:
-
-  * Haversine is the path CONTRACTS §7.2 already requires to exist, and the
-    one it pins the exact threshold for, so nothing here contradicts it.
-  * The `distance_source` field and the per-pair cache seam are already in
-    place, so adding Directions later is a change inside `_measure()` alone
-    — no route, schema, or frontend change follows from it.
-  * It has no external dependency at all, so the feature cannot be taken
-    down by a missing API key or venue Wi-Fi (ARCHITECTURE §8's whole
-    concern).
-
-When Directions is added, populate `distance_source="directions"` and keep
-the Haversine branch as the fallback it was always specified to be.
+Google Directions is the primary source, Haversine is the fallback for any
+pair Directions can't route (or when `GOOGLE_MAPS_API_KEY` is unset, the
+call times out, or the API errors) — exactly the split CONTRACTS §7.2
+specifies. The Directions call is synchronous httpx with a short timeout
+and never raises: any failure mode falls through to Haversine, because a
+missing key or dead venue Wi-Fi must degrade the feature, not the request
+(ARCHITECTURE §8).
 """
 from __future__ import annotations
 
+import logging
 import math
 from dataclasses import dataclass
 from datetime import date
 from typing import Dict, List, Literal, Optional, Sequence, Tuple
 from uuid import UUID
 
+import httpx
+
+from app.core.config import settings
+
+logger = logging.getLogger(__name__)
+
 EARTH_RADIUS_KM = 6371.0
+
+DIRECTIONS_URL = "https://maps.googleapis.com/maps/api/directions/json"
+DIRECTIONS_TIMEOUT_SECONDS = 5.0
+
+# Per CONTRACTS §7.2: "cache the result for a given ordered city-pair... so
+# re-fetching the same trip's stops repeatedly doesn't re-call the API
+# every page load." An in-process dict is enough for a hackathon-scale
+# deployment — it's cleared on restart, which just means the first request
+# after a restart re-populates it.
+_directions_cache: Dict[Tuple[str, str], Tuple[float, float]] = {}
 
 # CONTRACTS §7.2 pins the fallback trigger: flag when the hop is a long one
 # AND there is no travel day between the two stops. Both conditions must
@@ -87,34 +94,84 @@ def travel_gap_days(previous_end: date, current_start: date) -> int:
     return max((current_start - previous_end).days, 0)
 
 
-def _measure(
-    lat1: float, lon1: float, lat2: float, lon2: float
-) -> Tuple[float, float, Literal["directions", "haversine"]]:
+def _directions_km_hours(
+    origin_id: str, origin_lat: float, origin_lon: float, dest_id: str, dest_lat: float, dest_lon: float
+) -> Optional[Tuple[float, float]]:
     """
-    Distance (km) + duration (h) for one city pair, and which source produced them.
+    One Google Directions call, cached by ordered city-pair id.
 
-    The seam where Google Directions goes when B11's online path is built:
-    try Directions first, fall back to the Haversine branch below for any
-    pair it cannot route. Everything downstream reads the returned tuple and
-    never needs to know which branch ran.
+    Returns None on every failure mode — no key, timeout, network error,
+    non-OK status, or a pair Directions can't route (e.g. intercontinental,
+    which has no driving/transit route). None means "fall back to
+    Haversine"; this function never raises.
     """
+    if not settings.google_maps_api_key:
+        return None
+
+    cache_key = (origin_id, dest_id)
+    if cache_key in _directions_cache:
+        return _directions_cache[cache_key]
+
+    try:
+        response = httpx.get(
+            DIRECTIONS_URL,
+            params={
+                "origin": f"{origin_lat},{origin_lon}",
+                "destination": f"{dest_lat},{dest_lon}",
+                "key": settings.google_maps_api_key,
+            },
+            timeout=DIRECTIONS_TIMEOUT_SECONDS,
+        )
+        response.raise_for_status()
+        data = response.json()
+        if data.get("status") != "OK" or not data.get("routes"):
+            return None
+
+        leg = data["routes"][0]["legs"][0]
+        distance_km = leg["distance"]["value"] / 1000.0
+        duration_hours = leg["duration"]["value"] / 3600.0
+    except (httpx.HTTPError, KeyError, IndexError, TypeError, ValueError) as exc:
+        logger.warning("feasibility: Directions call failed (%s), falling back to Haversine", exc)
+        return None
+
+    result = (distance_km, duration_hours)
+    _directions_cache[cache_key] = result
+    return result
+
+
+def _measure(
+    origin_id: str,
+    lat1: float,
+    lon1: float,
+    dest_id: str,
+    lat2: float,
+    lon2: float,
+) -> Tuple[float, float, Literal["directions", "haversine"]]:
+    """Distance (km) + duration (h) for one city pair, and which source produced them."""
+    directions = _directions_km_hours(origin_id, lat1, lon1, dest_id, lat2, lon2)
+    if directions is not None:
+        distance, duration = directions
+        return distance, duration, "directions"
+
     distance = haversine_km(lat1, lon1, lat2, lon2)
     return distance, distance / ASSUMED_AVERAGE_SPEED_KMH, "haversine"
 
 
-def _is_feasible(distance_km: float, gap_days: int, source: str) -> bool:
+def _is_feasible(distance_km: float, duration_hours: float, gap_days: int, source: str) -> bool:
     """
     The one feasibility rule (CONTRACTS §7.2).
 
     On the Haversine path the pinned threshold applies verbatim: not
     feasible when the hop is over LONG_HOP_KM *and* the gap is under a day.
-    When a real Directions duration is available, compare that duration to
-    the window instead — a routed 14h drive with no day to do it in is
-    infeasible regardless of how short the straight line looked.
+    On the Directions path, compare the real routed duration to the window
+    instead — a routed 14h drive with no day to do it in is infeasible
+    regardless of how short the straight line looked, and a routed 2h
+    transit hop is fine even with zero gap days.
     """
     if source == "haversine":
         return not (distance_km > LONG_HOP_KM and gap_days < MIN_TRAVEL_GAP_DAYS)
-    return gap_days >= MIN_TRAVEL_GAP_DAYS
+    hours_available = (gap_days + 1) * 24
+    return duration_hours <= hours_available
 
 
 def compute_legs(stops: Sequence) -> Dict[UUID, Leg]:
@@ -143,7 +200,12 @@ def compute_legs(stops: Sequence) -> Dict[UUID, Leg]:
             continue
 
         distance, duration, source = _measure(
-            previous_city.latitude, previous_city.longitude, city.latitude, city.longitude
+            str(previous_city.id),
+            previous_city.latitude,
+            previous_city.longitude,
+            str(city.id),
+            city.latitude,
+            city.longitude,
         )
         gap = travel_gap_days(previous.date_end, stop.date_start)
         legs[stop.id] = Leg(
@@ -151,7 +213,7 @@ def compute_legs(stops: Sequence) -> Dict[UUID, Leg]:
             travel_duration_hours=round(duration, 1),
             distance_source=source,
             travel_gap_days=gap,
-            is_feasible=_is_feasible(distance, gap, source),
+            is_feasible=_is_feasible(distance, duration, gap, source),
         )
         previous = stop
 

@@ -17,6 +17,7 @@ import { Link } from "react-router-dom";
 import { ApiError } from "../api/client";
 import { api } from "../api/endpoints";
 import { InertBlock } from "../components/Inert";
+import { getTripCoverImage } from "../lib/cityImages";
 import {
   formatDateRange,
   formatIsoDate,
@@ -41,21 +42,13 @@ function SectionDivider({ label }: { label: string }) {
 }
 
 function TripCover({ trip }: { trip: Trip }) {
-  if (trip.cover_image_url) {
-    return (
-      <img
-        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-        src={trip.cover_image_url}
-        alt=""
-      />
-    );
-  }
   return (
-    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-surface-container-high to-secondary-fixed-dim">
-      <span className="material-symbols-outlined text-[48px] text-on-surface-variant/40">
-        landscape
-      </span>
-    </div>
+    <img
+      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+      src={getTripCoverImage(trip)}
+      alt=""
+      loading="lazy"
+    />
   );
 }
 

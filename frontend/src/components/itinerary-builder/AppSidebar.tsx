@@ -7,6 +7,7 @@ const SIDEBAR_LINKS = [
   { label: "Explore", icon: "travel_explore", path: "/explore" },
   { label: "My Trips", icon: "explore", path: "/trips" },
   { label: "Plan a Trip", icon: "edit_calendar", path: "/trips/new" },
+  { label: "Profile", icon: "person", path: "/profile" },
 ] as const;
 
 /**

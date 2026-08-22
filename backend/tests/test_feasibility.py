@@ -22,6 +22,11 @@ from app.services.feasibility import (
 class FakeCity:
     latitude: float
     longitude: float
+    id: uuid.UUID = None  # type: ignore[assignment]
+
+    def __post_init__(self) -> None:
+        if self.id is None:
+            self.id = uuid.uuid4()
 
 
 @dataclass

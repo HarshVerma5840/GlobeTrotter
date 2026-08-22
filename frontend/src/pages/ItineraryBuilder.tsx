@@ -34,6 +34,9 @@ export default function ItineraryBuilder() {
   const queryClient = useQueryClient();
   const [activeDayIso, setActiveDayIso] = useState<string | null>(null);
   const [showRoute, setShowRoute] = useState(false);
+  const [editingDates, setEditingDates] = useState(false);
+  const [draftStart, setDraftStart] = useState("");
+  const [draftEnd, setDraftEnd] = useState("");
 
   const tripQuery = useQuery({
     queryKey: ["trips", tripId],
@@ -72,6 +75,28 @@ export default function ItineraryBuilder() {
     onSuccess: (updated) => queryClient.setQueryData(["trips", tripId], { ...trip, ...updated }),
   });
 
+  /**
+   * Smart Trip Assistant (CONTRACTS §7.1) — real Groq call, real DB
+   * validation, real deterministic fallback if the LLM is unreachable.
+   * Wired directly into the existing header rather than a dedicated modal
+   * screen: "balanced" pace, no interest filter, fills whatever days after
+   * the last existing stop are still empty. Non-destructive — it never
+   * clears what's already planned.
+   */
+  const autoPlan = useMutation({
+    mutationFn: () => api.trips.autoPlan(tripId!, { pace: "balanced", interest_categories: [] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["trips", tripId] }),
+  });
+
+  const updateDates = useMutation({
+    mutationFn: ({ date_start, date_end }: { date_start: string; date_end: string }) =>
+      api.trips.update(tripId!, { date_start, date_end } as Parameters<typeof api.trips.update>[1]),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["trips", tripId] });
+      setEditingDates(false);
+    },
+  });
+
   if (tripQuery.isPending) {
     return (
       <div className="bg-background-cream min-h-screen flex items-center justify-center">
@@ -108,9 +133,61 @@ export default function ItineraryBuilder() {
           <div className="flex flex-col w-full h-full relative">
             <header className="w-full flex items-end justify-between pb-content-v-gap border-b border-outline-variant/30 relative z-10 mb-12 gap-6">
               <div className="flex flex-col gap-4 min-w-0">
-                <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest bg-sand-accent w-fit px-3 py-1 rounded-full">
-                  {formatDateRange(trip)}
-                </span>
+                {editingDates ? (
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <input
+                      type="date"
+                      id="trip-date-start"
+                      value={draftStart}
+                      onChange={(e) => setDraftStart(e.target.value)}
+                      className="border border-outline-variant rounded-lg px-3 py-1.5 font-label-sm text-label-sm text-premium-navy bg-white focus:outline-none focus:ring-2 focus:ring-premium-navy/30"
+                    />
+                    <span className="font-label-sm text-label-sm text-on-surface-variant">→</span>
+                    <input
+                      type="date"
+                      id="trip-date-end"
+                      value={draftEnd}
+                      min={draftStart}
+                      onChange={(e) => setDraftEnd(e.target.value)}
+                      className="border border-outline-variant rounded-lg px-3 py-1.5 font-label-sm text-label-sm text-premium-navy bg-white focus:outline-none focus:ring-2 focus:ring-premium-navy/30"
+                    />
+                    <button
+                      type="button"
+                      disabled={updateDates.isPending || !draftStart || !draftEnd}
+                      onClick={() => updateDates.mutate({ date_start: draftStart, date_end: draftEnd })}
+                      className="px-4 py-1.5 rounded-full bg-premium-navy text-background-cream font-label-sm text-label-sm disabled:opacity-50 hover:opacity-90 transition-opacity"
+                    >
+                      {updateDates.isPending ? "Saving…" : "Save"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingDates(false)}
+                      className="px-4 py-1.5 rounded-full border border-outline-variant font-label-sm text-label-sm text-on-surface-variant hover:bg-surface-container-low transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    {updateDates.isError && (
+                      <span className="font-label-sm text-label-sm text-error">
+                        {updateDates.error instanceof Error ? updateDates.error.message : "Failed to save dates."}
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    id="edit-trip-dates-btn"
+                    title="Click to edit trip dates"
+                    onClick={() => {
+                      setDraftStart(trip.date_start);
+                      setDraftEnd(trip.date_end);
+                      setEditingDates(true);
+                    }}
+                    className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest bg-sand-accent w-fit px-3 py-1 rounded-full hover:bg-sand-accent/70 transition-colors flex items-center gap-1.5 group"
+                  >
+                    {formatDateRange(trip)}
+                    <span className="material-symbols-outlined text-[14px] opacity-0 group-hover:opacity-60 transition-opacity">edit</span>
+                  </button>
+                )}
                 <h1 className="font-display-xl text-display-xl text-premium-navy truncate">
                   {trip.name}
                 </h1>
@@ -122,6 +199,16 @@ export default function ItineraryBuilder() {
               </div>
               <div className="flex flex-col items-end gap-2 shrink-0">
                 <div className="flex items-center gap-4">
+                  <button
+                    type="button"
+                    onClick={() => autoPlan.mutate()}
+                    disabled={autoPlan.isPending}
+                    title="Fills empty days using Groq, grounded in this trip's real catalog — falls back to a deterministic planner if the LLM is unreachable (CONTRACTS §7.1)"
+                    className="bg-glass-white backdrop-blur-md px-6 py-3 rounded-full text-premium-navy border border-premium-navy/20 flex items-center gap-2 hover:bg-surface-container-high transition-colors font-label-lg text-label-lg disabled:opacity-50"
+                  >
+                    <span className="material-symbols-outlined text-[20px]">auto_awesome</span>
+                    {autoPlan.isPending ? "Planning…" : "Plan For Me"}
+                  </button>
                   <button
                     type="button"
                     onClick={() => share.mutate(!trip.is_public)}
@@ -139,6 +226,17 @@ export default function ItineraryBuilder() {
                     Finalize Trip
                   </InertButton>
                 </div>
+                {autoPlan.isSuccess && (
+                  <p className="font-label-sm text-label-sm text-on-surface-variant">
+                    Added {autoPlan.data.activities_created} activities across{" "}
+                    {autoPlan.data.stops_created} new stops (source: {autoPlan.data.source})
+                  </p>
+                )}
+                {autoPlan.isError && (
+                  <p className="font-label-sm text-label-sm text-error">
+                    {autoPlan.error instanceof Error ? autoPlan.error.message : "Auto-plan failed."}
+                  </p>
+                )}
                 {trip.is_public && trip.share_token && (
                   <p className="font-label-sm text-label-sm text-on-surface-variant">
                     Share token: <code className="font-mono">{trip.share_token}</code> (public

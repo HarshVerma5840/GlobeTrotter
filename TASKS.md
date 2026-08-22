@@ -98,16 +98,13 @@ working core flow.
   *when* (all date maths) — the model is never asked to produce a date.
   Auto-plan is non-destructive: it fills the days after any existing stop
   rather than clearing hand-built work.
-- **B11** [P1] ⚠️ **PARTIAL** `services/feasibility.py` — the Haversine path,
-  the pinned threshold, and all five computed fields
-  (`distance_from_previous_km`, `travel_duration_hours`, `distance_source`,
-  `travel_gap_days`, `is_feasible`) are live on every stop response.
-  **Not yet built:** the Google Directions primary path and its per-city-pair
-  cache. Deliberate scope call for demo-critical time, not an oversight —
-  the fallback CONTRACTS §7.2 requires is the half that has no external
-  dependency, so the feature cannot be taken down by a missing key or venue
-  Wi-Fi. Adding Directions is a change inside `_measure()` alone: no route,
-  schema, or frontend change follows from it. See the module docstring.
+- **B11** [P1] ✅ **DONE** — `services/feasibility.py` now calls Google
+  Directions as primary source, falling back to Haversine for any pair
+  Directions can't route (or if the key is unset/the call fails/times
+  out — never raises). Per-city-pair in-process cache per CONTRACTS §7.2.
+  Verified live: real `GOOGLE_MAPS_API_KEY`, real DB cities, Paris→Rome
+  returned `1454.0 km, 14.7 h, source=directions`. `httpx` moved from dev
+  to main deps (it's a runtime call now, not just a test client).
 - **B14** [P2] Places-backed city search: `GET /cities/places-search`,
   `POST /cities/from-place` upserting a `City` row keyed on
   `google_place_id` (CONTRACTS §7.4) — polish on top of the P0 City Search
