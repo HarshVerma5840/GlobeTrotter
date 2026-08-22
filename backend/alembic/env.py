@@ -6,9 +6,9 @@ from sqlalchemy import engine_from_config, pool
 from app.core.config import settings
 from app.db.base import Base
 
-# import every model module here as they're added (Backend Wave 0, B2)
-# so Base.metadata is populated for autogenerate, e.g.:
-# from app.models import user, trip, stop, city, activity, itinerary_activity  # noqa
+# Populates Base.metadata for autogenerate — app/models/__init__.py is the
+# single place new model modules must be added (see its own docstring).
+import app.models  # noqa: F401
 
 config = context.config
 
