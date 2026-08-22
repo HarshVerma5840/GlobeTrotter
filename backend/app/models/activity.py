@@ -3,7 +3,7 @@ import uuid
 
 from sqlalchemy import Float, ForeignKey, Numeric, String, Text
 from sqlalchemy import Enum as SAEnum
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -28,9 +28,11 @@ class ActivityCategory(str, enum.Enum):
 class Activity(Base):
     __tablename__ = "activities"
 
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
-    city_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("cities.id"), nullable=False)
+    city_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("cities.id"), nullable=False, index=True
+    )
     category: Mapped[ActivityCategory] = mapped_column(
         SAEnum(ActivityCategory, name="activity_category", native_enum=False, length=20),
         nullable=False,

@@ -2,7 +2,7 @@ import uuid
 from datetime import date
 
 from sqlalchemy import Date, Float, ForeignKey, Numeric, Text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -23,11 +23,11 @@ class ItineraryActivity(Base):
 
     __tablename__ = "itinerary_activities"
 
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
     stop_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("stops.id", ondelete="CASCADE"), nullable=False
+        Uuid(as_uuid=True), ForeignKey("stops.id", ondelete="CASCADE"), nullable=False, index=True
     )
-    activity_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("activities.id"), nullable=False)
+    activity_id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), ForeignKey("activities.id"), nullable=False)
     scheduled_date: Mapped[date] = mapped_column(Date, nullable=False)
     scheduled_time: Mapped[float | None] = mapped_column(Float, nullable=True)
     cost: Mapped[float | None] = mapped_column(Numeric(10, 2), nullable=True)

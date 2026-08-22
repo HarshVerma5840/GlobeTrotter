@@ -1,20 +1,26 @@
-"""
-Skeleton-phase test: confirms the app imports and the /health route is
-registered. This intentionally does NOT hit a real database — Backend
-Wave 0 (B1) owns turning this into a real integration test once a test DB
-fixture exists.
-"""
+"""GET /health — CONTRACTS §4: plain {"status": "ok"} once the DB connects."""
 from fastapi.testclient import TestClient
 
 from app.main import app
 
 
 def test_health_route_registered():
-    paths = [route.path for route in app.routes]
-    assert "/health" in paths
+    # Read from the OpenAPI schema, not app.routes: newer Starlette wraps
+    # include_router() results in _IncludedRouter, which has no .path.
+    assert "/health" in app.openapi()["paths"]
 
 
 def test_app_starts():
-    # TestClient construction alone exercises app startup/middleware wiring
     with TestClient(app):
         pass
+
+
+async def test_health_returns_ok(client):
+    resp = await client.get("/health")
+    assert resp.status_code == 200
+    assert resp.json() == {"status": "ok"}
+
+
+async def test_health_requires_no_auth(client):
+    # CONTRACTS §4 lists /health with auth "none" — must not 401.
+    assert (await client.get("/health")).status_code == 200

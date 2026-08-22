@@ -2,7 +2,7 @@ import uuid
 from datetime import date
 
 from sqlalchemy import CheckConstraint, Date, ForeignKey, Integer
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -27,11 +27,11 @@ class Stop(Base):
     __tablename__ = "stops"
     __table_args__ = (CheckConstraint("date_end >= date_start", name="ck_stop_dates"),)
 
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
     trip_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("trips.id", ondelete="CASCADE"), nullable=False
+        Uuid(as_uuid=True), ForeignKey("trips.id", ondelete="CASCADE"), nullable=False, index=True
     )
-    city_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("cities.id"), nullable=False)
+    city_id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), ForeignKey("cities.id"), nullable=False)
     sequence: Mapped[int] = mapped_column(Integer, nullable=False)
     date_start: Mapped[date] = mapped_column(Date, nullable=False)
     date_end: Mapped[date] = mapped_column(Date, nullable=False)

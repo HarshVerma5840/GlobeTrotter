@@ -75,6 +75,7 @@ Startup command (documented, not improvised per machine):
 ```
 docker compose up -d
 docker compose exec api alembic upgrade head
+docker compose exec api python -m app.seed   # idempotent catalog seed (B5)
 curl http://localhost:8000/health   # expect 200 OK
 ```
 
@@ -128,6 +129,17 @@ DB constraint: `date_start`/`date_end` must fall within the parent trip's
 range; stops on the same trip must not overlap in date (enforced in the
 service layer at write time, not a raw SQL constraint, since it's a
 cross-row check).
+
+**Clarification (Backend, B2) - what "overlap" means:** two consecutive
+stops MAY share exactly one boundary day (stop A ends 5 May, stop B starts
+5 May); that shared day is the travel day. Only an overlap of a full day or
+more is rejected. This is required for consistency with §7.2, whose
+feasibility rule triggers on `travel_gap_days < 1` - a case that is
+unreachable if touching stops are rejected outright. Implemented once in
+`services/stops.py::overlaps` as `a_start < b_end and b_start < a_end`.
+Affects **Frontend** (date-picker validation must allow the shared day) and
+**QA** (Q1/Q2 fixtures). A stop's own `date_end >= date_start` IS a real SQL
+CHECK, on both `trips` and `stops`.
 
 Computed (returned by the API, not stored columns): `distance_from_previous_km`,
 `travel_gap_days`, `is_feasible` — see §7.2.
@@ -202,6 +214,29 @@ per activity; changing your mind updates the row, never inserts a second.
 - All protected routes require `Authorization: Bearer <token>`; a missing
   or invalid token is `401`, a valid token but insufficient ownership/role
   is `403` — never conflate the two status codes.
+
+**Clarifications (Backend, B3) — two details Frontend must code against:**
+
+1. **The login form field is `username`, not `email`.** `POST /auth/login`
+   is a real OAuth2 password flow, and the OAuth2 spec fixes that field
+   name; the user's email address is what goes in it. So the request is
+   `Content-Type: application/x-www-form-urlencoded` with
+   `username=<the email>&password=<password>` — **not** a JSON body, and
+   **not** a field literally called `email`. Signup, by contrast, IS JSON.
+   Keeping the standard flow means /docs' "Authorize" button works, which
+   is worth having during the demo. Affects **Frontend** (`api/client.ts`
+   login call) and **QA** (Q1 fixtures).
+2. **Duplicate signup email returns `409 Conflict`** (not 400/422) with
+   `{"detail": "An account with that email already exists."}`. Login
+   failure returns `401` with one generic message for both "no such
+   email" and "wrong password", so the endpoint can't be used to
+   enumerate registered accounts — Frontend must not try to distinguish
+   them. Affects **Frontend** (signup/login error copy), **QA** (Q2).
+
+Password rules (Backend choice, not previously specified): minimum 8
+characters, maximum 72 **bytes** — the latter because bcrypt silently
+truncates beyond 72 bytes, so it is rejected with `422` rather than
+accepted and quietly weakened.
 
 ## 4. Core REST Routes
 

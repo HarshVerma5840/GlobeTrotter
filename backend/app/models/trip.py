@@ -2,7 +2,7 @@ import uuid
 from datetime import date
 
 from sqlalchemy import Boolean, CheckConstraint, Date, ForeignKey, Numeric, String, Text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -22,13 +22,15 @@ class Trip(Base):
     __tablename__ = "trips"
     __table_args__ = (CheckConstraint("date_end >= date_start", name="ck_trip_dates"),)
 
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     date_start: Mapped[date] = mapped_column(Date, nullable=False)
     date_end: Mapped[date] = mapped_column(Date, nullable=False)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     cover_image_url: Mapped[str | None] = mapped_column(String(1024), nullable=True)
-    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True
+    )
     is_public: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
     share_token: Mapped[str | None] = mapped_column(String(255), unique=True, nullable=True)
     budget_target: Mapped[float | None] = mapped_column(Numeric(10, 2), nullable=True)
